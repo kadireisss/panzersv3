@@ -18,7 +18,8 @@ function buildInsertRow(platform, { title, price, description, images, url }) {
   const insertData = {};
   const imgs = images || [];
   const t = (title || '').trim() || 'İsimsiz ilan';
-  const p = price != null ? String(price) : '';
+  const rawP = price != null && price !== '' ? String(price).trim() : '';
+  const p = rawP.toLowerCase() === 'null' ? '' : rawP;
   const d = description != null ? String(description) : '';
   const u = url != null ? String(url) : '';
 

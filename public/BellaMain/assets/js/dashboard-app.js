@@ -73,6 +73,7 @@
   function rowPrice(r) {
     const p = r.urunfiyati ?? r.urunfiyat ?? r.fiyat ?? r.ProductPrice;
     if (p == null || p === '') return '—';
+    if (typeof p === 'string' && p.trim().toLowerCase() === 'null') return '—';
     if (typeof p === 'number' && !Number.isNaN(p)) return Pzr.formatNum(p) + ' ₺';
     const str = String(p).trim();
     const n = parseFloat(str);

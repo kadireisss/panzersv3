@@ -69,22 +69,124 @@ function jsonLdRoots(parsed) {
   return [parsed];
 }
 
+/** Tek bir Offer / AggregateOffer / priceSpecification düğümünden fiyat çıkar */
+function extractPriceFromOfferLike(o) {
+  if (!o || typeof o !== 'object') return '';
+  const direct = o.price ?? o.lowPrice ?? o.highPrice ?? o.minPrice ?? o.maxPrice;
+  if (direct != null && String(direct).trim() !== '') return String(direct).trim();
+  const ps = o.priceSpecification;
+  if (ps) {
+    if (Array.isArray(ps)) {
+      for (const p of ps) {
+        const v = extractPriceFromOfferLike(p);
+        if (v) return v;
+      }
+    } else {
+      const v = extractPriceFromOfferLike(ps);
+      if (v) return v;
+    }
+  }
+  return '';
+}
+
 function extractLdPrice(offers) {
   if (!offers) return '';
-  const pickOne = (o) => {
-    if (!o || typeof o !== 'object') return '';
-    const v = o.price ?? o.lowPrice ?? o.highPrice;
-    if (v != null && String(v).trim() !== '') return String(v).trim();
-    return '';
-  };
   if (Array.isArray(offers)) {
-    for (const o of offers) {
-      const p = pickOne(o);
+    for (const item of offers) {
+      const p = extractPriceFromOfferLike(item);
       if (p) return p;
     }
     return '';
   }
-  return pickOne(offers);
+  return extractPriceFromOfferLike(offers);
+}
+
+/** @graph veya ayrı bloklardaki Offer / AggregateOffer (Migros, HB vb.) */
+function tryJsonLdStandaloneOffers(html) {
+  const re = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  let best = '';
+  let bestNum = 0;
+  while ((m = re.exec(html)) !== null) {
+    let j;
+    try {
+      j = JSON.parse(m[1].trim());
+    } catch {
+      continue;
+    }
+    const nodes = jsonLdRoots(j);
+    for (const node of nodes) {
+      if (!node || typeof node !== 'object') continue;
+      const types = node['@type'];
+      const tlist = Array.isArray(types) ? types : types ? [types] : [];
+      const isOfferish = tlist.some((t) => /Offer|AggregateOffer|Aggregate/i.test(String(t)));
+      if (!isOfferish) continue;
+      const pr = extractLdPrice(node.offers) || extractPriceFromOfferLike(node);
+      if (!pr) continue;
+      const num = parseFloat(String(pr).replace(/\./g, '').replace(',', '.')) || parseFloat(String(pr));
+      if (!Number.isNaN(num) && num > bestNum) {
+        bestNum = num;
+        best = pr;
+      }
+    }
+  }
+  return best;
+}
+
+function stripScriptsAndStyles(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ');
+}
+
+/** SPA / gömülü state: script gövdelerinde yaygın fiyat anahtarları */
+function tryJsonPriceInRawHtml(html) {
+  const keys = [
+    'salePrice',
+    'discountedPrice',
+    'listPrice',
+    'finalPrice',
+    'unitPrice',
+    'grossPrice',
+    'productPrice',
+    'regularPrice',
+  ];
+  let best = '';
+  let bestNum = 0;
+  for (const k of keys) {
+    const re = new RegExp(`"${k}"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)`, 'gi');
+    let mm;
+    while ((mm = re.exec(html)) !== null) {
+      const raw = mm[1];
+      const num = parseFloat(raw);
+      if (!Number.isNaN(num) && num > 0 && num < 5e7 && num >= bestNum) {
+        bestNum = num;
+        best = raw;
+      }
+    }
+  }
+  return best;
+}
+
+/** Son çare: gövdede 12.345,67 TL / 123,45 ₺ (scriptler çıkarıldıktan sonra ilk anlamlı eşleşme) */
+function tryHeuristicTurkishPrice(html) {
+  const plain = stripScriptsAndStyles(html);
+  const re1 = /\b(\d{1,3}(?:\.\d{3})+(?:,\d{2})?)\s*(?:TL|TRY|₺)\b/i;
+  const m1 = plain.match(re1);
+  if (m1) {
+    const normalized = m1[1].replace(/\./g, '').replace(',', '.');
+    const num = parseFloat(normalized);
+    if (!Number.isNaN(num) && num > 0 && num < 5e7) return normalized;
+  }
+  const re2 = /\b(\d{1,6},\d{2})\s*(?:TL|TRY|₺)\b/i;
+  const m2 = plain.match(re2);
+  if (m2) {
+    const normalized = m2[1].replace(',', '.');
+    const num = parseFloat(normalized);
+    if (!Number.isNaN(num) && num > 0 && num < 5e7) return normalized;
+  }
+  return '';
 }
 
 /** schema.org ImageObject: contentUrl / url, string veya dizi */
@@ -236,6 +338,9 @@ async function fetchAndParseListing(url) {
       metaByProperty(html, 'twitter:data1') ||
       '';
   }
+  if (!price) price = tryJsonLdStandaloneOffers(html) || '';
+  if (!price) price = tryJsonPriceInRawHtml(html) || '';
+  if (!price) price = tryHeuristicTurkishPrice(html) || '';
   let images = ld?.images?.length ? ld.images : allOgImages(html);
   if (!images.length) {
     const one = metaByProperty(html, 'og:image');
