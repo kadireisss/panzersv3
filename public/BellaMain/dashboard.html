@@ -142,25 +142,30 @@
     grid.appendChild(btn);
   });
 
-  const session = Pzr.getSessionInfo();
-  if (!session) { window.location.href = '/signin'; return; }
-  document.getElementById('userName').textContent = session.kul_id || '—';
-  document.getElementById('welcomeText').textContent = `Hoş geldin, ${session.kul_id}`;
-  if (session.is_rol === 'admin' || session.is_rol === 'mod') document.getElementById('adminSection').style.display = 'block';
-
-  // Kullanıcı verilerini API'den çek
-  (async () => {
+  // auth_token httpOnly olduğu için tarayıcıda JWT okunamaz; oturum sunucudan doğrulanır
+  (async function loadSession() {
     try {
       const res = await fetch('/api/panel/me', { credentials: 'same-origin' });
       const data = await res.json();
-      if (data.sonuc === 'tamam' && data.user) {
-        document.getElementById('statBakiye').textContent = Pzr.formatNum(data.user.bakiye || 0) + ' ₺';
-        document.getElementById('statToplam').textContent = Pzr.formatNum(data.user.toplamalinan || 0) + ' ₺';
-        document.getElementById('statTG').textContent = data.user.tgadresi || '—';
-        document.getElementById('statTGKod').textContent = data.user.tgkod || '—';
-        if (data.user.userimage) { document.getElementById('userAvatar').src = data.user.userimage; document.getElementById('userAvatar').style.display = ''; }
+      if (!res.ok || data.sonuc !== 'tamam' || !data.kullanici) {
+        window.location.href = '/signin';
+        return;
       }
-    } catch {}
+      const u = data.kullanici;
+      document.getElementById('userName').textContent = u.kullaniciadi || '—';
+      document.getElementById('welcomeText').textContent = `Hoş geldin, ${u.kullaniciadi}`;
+      if (u.rol === 'admin' || u.rol === 'mod') document.getElementById('adminSection').style.display = 'block';
+      document.getElementById('statBakiye').textContent = Pzr.formatNum(u.bakiye || 0) + ' ₺';
+      document.getElementById('statToplam').textContent = Pzr.formatNum(u.toplamalinan || 0) + ' ₺';
+      document.getElementById('statTG').textContent = u.tgadresi || '—';
+      document.getElementById('statTGKod').textContent = u.tgkod || '—';
+      if (u.userimage) {
+        document.getElementById('userAvatar').src = u.userimage;
+        document.getElementById('userAvatar').style.display = '';
+      }
+    } catch {
+      window.location.href = '/signin';
+    }
   })();
 
   document.addEventListener('visibilitychange', () => { document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER — Dashboard'; });

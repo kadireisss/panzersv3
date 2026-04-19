@@ -49,6 +49,7 @@
 
   function getCookie(name) { const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return v ? decodeURIComponent(v.pop()) : null; }
   function decodeJWT(token) { try { const p = token.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); } catch { return null; } }
+  /** auth_token httpOnly ise her zaman null döner; panelde /api/panel/me kullanın */
   function getSessionInfo() { const t = getCookie('auth_token'); if (!t) return null; return decodeJWT(t); }
   function formatDate(str) { if (!str) return '-'; try { const d = new Date(str); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; } catch { return str; } }
 
