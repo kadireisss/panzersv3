@@ -142,6 +142,30 @@
     grid.appendChild(btn);
   });
 
+  document.querySelector('.pzr-sidebar-nav')?.addEventListener('click', (e) => {
+    const link = e.target.closest('a.pzr-nav-item[data-page]');
+    if (!link) return;
+    e.preventDefault();
+    const page = link.dataset.page;
+    document.querySelectorAll('.pzr-nav-item').forEach((n) => n.classList.remove('active'));
+    link.classList.add('active');
+    const pageTitle = document.getElementById('pageTitle');
+    if (page === 'dashboard') {
+      document.getElementById('page-dashboard').style.display = 'block';
+      document.getElementById('page-dynamic').style.display = 'none';
+      if (pageTitle) pageTitle.textContent = 'Dashboard';
+      return;
+    }
+    if (window.Swal) {
+      Swal.fire({
+        icon: 'info',
+        title: link.textContent.replace(/\s+/g, ' ').trim(),
+        text: 'Bu bölümün tam arayüzü henüz bu sayfada yok; API hazır olduğunda bağlanacak.',
+        confirmButtonColor: '#6c5ce7',
+      });
+    }
+  });
+
   // auth_token httpOnly olduğu için tarayıcıda JWT okunamaz; oturum sunucudan doğrulanır
   (async function loadSession() {
     try {

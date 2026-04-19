@@ -5,6 +5,12 @@
 
 .pzr-layout { display: flex; min-height: 100vh; background: var(--pzr-bg-primary, #0a0a0f); font-family: var(--pzr-font, 'Inter', sans-serif); color: var(--pzr-text-primary, #e8e8ed); }
 
+/* Mobil menü overlay: masaüstünde tamamen kapalı — tıklamaları asla engellemesin */
+.pzr-sidebar-overlay {
+  display: none !important;
+  pointer-events: none !important;
+}
+
 .pzr-sidebar {
   width: 260px; min-height: 100vh; background: var(--pzr-bg-secondary, #12121a);
   border-right: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column;
@@ -37,7 +43,7 @@
 .pzr-market-btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08); transform: translateY(-1px); }
 .pzr-market-badge { width: 22px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: #fff; flex-shrink: 0; }
 
-.pzr-main { flex: 1; margin-left: 260px; display: flex; flex-direction: column; }
+.pzr-main { flex: 1; margin-left: 260px; display: flex; flex-direction: column; position: relative; z-index: 2; }
 
 .pzr-topbar { height: 60px; background: rgba(18,18,26,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 90; }
 .pzr-topbar-left { display: flex; align-items: center; gap: 1rem; }
@@ -86,8 +92,18 @@
   .pzr-sidebar.open { transform: translateX(0); }
   .pzr-main { margin-left: 0; }
   .pzr-hamburger { display: block; }
-  .pzr-sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-  .pzr-sidebar-overlay.active { display: block; }
+  .pzr-sidebar-overlay {
+    display: none !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    pointer-events: none;
+  }
+  .pzr-sidebar-overlay.active {
+    display: block !important;
+    pointer-events: auto;
+  }
   .pzr-stats-grid { grid-template-columns: 1fr 1fr; }
 }
 

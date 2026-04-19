@@ -29,8 +29,20 @@
     return Promise.resolve({ isConfirmed: confirm(title + '\n' + text) });
   }
 
-  function openModal(id) { const o = document.getElementById(id); if (o) o.classList.add('active'); document.body.style.overflow = 'hidden'; }
-  function closeModal(id) { const o = document.getElementById(id); if (o) o.classList.remove('active'); document.body.style.overflow = ''; }
+  function openModal(id) {
+    const o = document.getElementById(id);
+    if (!o) {
+      if (window.Swal) Swal.fire({ icon: 'info', title: 'Modül', text: 'Bu pazaryeri arayüzü henüz bu sayfada tanımlı değil.', confirmButtonColor: '#6c5ce7' });
+      return;
+    }
+    o.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    const o = document.getElementById(id);
+    if (o) o.classList.remove('active');
+    if (!document.querySelector('.pzr-modal-overlay.active')) document.body.style.overflow = '';
+  }
 
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('pzr-modal-overlay')) { e.target.classList.remove('active'); document.body.style.overflow = ''; }
