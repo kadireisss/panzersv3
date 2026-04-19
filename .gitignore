@@ -8,3 +8,9 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# Supabase agent-skills (yerel: npx skills add supabase/agent-skills)
+.agents/
+.claude/
+.qoder/
+skills-lock.json
