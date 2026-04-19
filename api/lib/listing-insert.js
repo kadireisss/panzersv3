@@ -50,7 +50,13 @@ function buildInsertRow(platform, { title, price, description, images, url }) {
       });
       break;
     case 'trendyol':
-      Object.assign(insertData, { urunadi: t, urunfiyat: p, urunaciklama: d, urunresmi: imgs[0] || '' });
+      Object.assign(insertData, {
+        urunadi: t,
+        urunfiyat: p,
+        urunaciklama: d,
+        urunresmi: imgs[0] || '',
+        kaynak_url: u,
+      });
       break;
     case 'hepsiburada':
       Object.assign(insertData, { urunadi: t, urunfiyat: p, urunresim: imgs[0] || '', urunlink: u });

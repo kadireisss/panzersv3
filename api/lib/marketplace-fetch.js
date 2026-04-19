@@ -1,10 +1,6 @@
 /**
  * İlan URL → platform + HTML'den başlık/fiyat/görsel (og + JSON-LD, basit regex).
- * Bazı siteler sunucu IP'sini engelleyebilir; bookmarklet veya importListing ile gönderilen html yedek akıştır.
- *
- * IMPORT_LISTING_FETCH_DELEGATE (isteğe bağlı): Kendi HTTPS endpoint'inize POST { url } gönderilir;
- * yanıt JSON { html } veya düz HTML. IMPORT_LISTING_FETCH_DELEGATE_SECRET varsa Authorization: Bearer … eklenir.
- * Yasal uyum ve hedef site koşulları kullanıcıya aittir.
+ * Bazı siteler sunucu IP'sini engelleyebilir; bu durumda bookmarklet yedek akıştır.
  */
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -67,9 +63,62 @@ function titleFromHtml(html) {
   return m ? decodeEntities(m[1].trim().replace(/\s*\|\s*.*$/, '')) : '';
 }
 
+function jsonLdRoots(parsed) {
+  if (Array.isArray(parsed)) return parsed;
+  if (parsed && typeof parsed === 'object' && Array.isArray(parsed['@graph'])) return parsed['@graph'];
+  return [parsed];
+}
+
+function extractLdPrice(offers) {
+  if (!offers) return '';
+  const pickOne = (o) => {
+    if (!o || typeof o !== 'object') return '';
+    const v = o.price ?? o.lowPrice ?? o.highPrice;
+    if (v != null && String(v).trim() !== '') return String(v).trim();
+    return '';
+  };
+  if (Array.isArray(offers)) {
+    for (const o of offers) {
+      const p = pickOne(o);
+      if (p) return p;
+    }
+    return '';
+  }
+  return pickOne(offers);
+}
+
+/** schema.org ImageObject: contentUrl / url, string veya dizi */
+function extractLdImages(imageField) {
+  if (!imageField) return [];
+  if (typeof imageField === 'string') return [imageField];
+  if (Array.isArray(imageField)) return imageField.flatMap((x) => extractLdImages(x));
+  if (typeof imageField === 'object') {
+    const o = imageField;
+    if (typeof o.url === 'string') return [o.url];
+    if (Array.isArray(o.url)) return o.url.filter(Boolean);
+    if (typeof o.contentUrl === 'string') return [o.contentUrl];
+    if (Array.isArray(o.contentUrl)) return o.contentUrl.filter(Boolean);
+  }
+  return [];
+}
+
+function ldProductScore(c) {
+  let s = 0;
+  if (c.title) s += 2;
+  if (c.price) s += 5;
+  if (c.images?.length) s += Math.min(c.images.length, 4);
+  if (c.description) s += 1;
+  return s;
+}
+
+/**
+ * Yalnızca @type Product (veya yakın türler) — WebPage'in `name` alanı Product sanılmasın (Trendyol vb.).
+ */
 function tryJsonLdProduct(html) {
   const re = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let m;
+  let best = null;
+  let bestScore = -1;
   while ((m = re.exec(html)) !== null) {
     let j;
     try {
@@ -77,28 +126,33 @@ function tryJsonLdProduct(html) {
     } catch {
       continue;
     }
-    const nodes = Array.isArray(j) ? j : [j];
+    const nodes = jsonLdRoots(j);
     for (const node of nodes) {
       if (!node || typeof node !== 'object') continue;
       const types = node['@type'];
       const tlist = Array.isArray(types) ? types : types ? [types] : [];
-      const isProduct = tlist.includes('Product') || node.name;
-      if (!isProduct && !node.productID) continue;
-      const name = node.name || node.headline || '';
-      let price = '';
-      const off = node.offers;
-      if (typeof off === 'object' && off) {
-        price = String(off.price ?? off.lowPrice ?? off.highPrice ?? '');
+      const isProduct =
+        tlist.includes('Product') ||
+        tlist.includes('IndividualProduct') ||
+        tlist.includes('ProductModel');
+      if (!isProduct) continue;
+      const name = (node.name || node.headline || '').trim();
+      const price = extractLdPrice(node.offers);
+      const images = extractLdImages(node.image).filter(Boolean);
+      const candidate = {
+        title: name,
+        price,
+        description: typeof node.description === 'string' ? node.description : '',
+        images,
+      };
+      const sc = ldProductScore(candidate);
+      if (sc > bestScore) {
+        best = candidate;
+        bestScore = sc;
       }
-      let images = [];
-      if (node.image) {
-        images = Array.isArray(node.image) ? node.image : [node.image];
-        images = images.map((x) => (typeof x === 'string' ? x : x?.url)).filter(Boolean);
-      }
-      return { title: name, price, description: node.description || '', images };
     }
   }
-  return null;
+  return best;
 }
 
 function detectPlatformFromUrl(raw) {
@@ -135,12 +189,36 @@ function bodyBufferWithTimeout(res, ms) {
   ]);
 }
 
-const FETCH_HEAD_MS = 14000;
-const BODY_READ_MS = 12000;
-const HTML_MAX_BYTES = 2_500_000;
-
-function parseListingFromHtml(htmlRaw) {
-  let html = typeof htmlRaw === 'string' ? htmlRaw : '';
+async function fetchAndParseListing(url) {
+  const ctrl = new AbortController();
+  const FETCH_HEAD_MS = 14000;
+  const BODY_READ_MS = 12000;
+  const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
+  let res;
+  try {
+    res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: {
+        'User-Agent': UA,
+        Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
+      },
+      redirect: 'follow',
+    });
+  } finally {
+    clearTimeout(t);
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  let buf;
+  try {
+    buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
+    throw e;
+  }
+  const max = 2_500_000;
+  const slice = buf.byteLength > max ? buf.slice(0, max) : buf;
+  let html = Buffer.from(slice).toString('utf8');
   if (html.charCodeAt(0) === 0xfeff) html = html.slice(1);
 
   const ld = tryJsonLdProduct(html);
@@ -168,94 +246,4 @@ function parseListingFromHtml(htmlRaw) {
   return { title, price, description, images };
 }
 
-async function fetchListingHtml(url) {
-  const delegate = (process.env.IMPORT_LISTING_FETCH_DELEGATE || '').trim();
-  if (delegate) {
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json, text/html;q=0.9,*/*;q=0.8',
-    };
-    const secret = (process.env.IMPORT_LISTING_FETCH_DELEGATE_SECRET || '').trim();
-    if (secret) headers.Authorization = `Bearer ${secret}`;
-
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
-    let res;
-    try {
-      res = await fetch(delegate, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ url }),
-        signal: ctrl.signal,
-        redirect: 'follow',
-      });
-    } finally {
-      clearTimeout(t);
-    }
-    if (!res.ok) throw new Error(`Delegasyon HTTP ${res.status}`);
-    const ct = (res.headers.get('content-type') || '').toLowerCase();
-    if (ct.includes('application/json')) {
-      const j = await res.json();
-      if (j && typeof j.html === 'string' && j.html.length) return j.html;
-      throw new Error('Delegasyon: yanıtta html alanı yok veya boş');
-    }
-    let buf;
-    try {
-      buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
-    } catch (e) {
-      if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
-      throw e;
-    }
-    const slice = buf.byteLength > HTML_MAX_BYTES ? buf.slice(0, HTML_MAX_BYTES) : buf;
-    return Buffer.from(slice).toString('utf8');
-  }
-
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
-  let res;
-  try {
-    res = await fetch(url, {
-      signal: ctrl.signal,
-      headers: {
-        'User-Agent': UA,
-        Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
-      },
-      redirect: 'follow',
-    });
-  } finally {
-    clearTimeout(t);
-  }
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  let buf;
-  try {
-    buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
-  } catch (e) {
-    if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
-    throw e;
-  }
-  const slice = buf.byteLength > HTML_MAX_BYTES ? buf.slice(0, HTML_MAX_BYTES) : buf;
-  return Buffer.from(slice).toString('utf8');
-}
-
-/** @param {string} url @param {{ html?: string }} [opts] */
-async function fetchAndParseListing(url, opts = {}) {
-  let html;
-  if (opts.html != null && String(opts.html).trim()) {
-    html = String(opts.html);
-    if (Buffer.byteLength(html, 'utf8') > HTML_MAX_BYTES) {
-      html = Buffer.from(html, 'utf8').subarray(0, HTML_MAX_BYTES).toString('utf8');
-    }
-  } else {
-    html = await fetchListingHtml(url);
-  }
-  return parseListingFromHtml(html);
-}
-
-module.exports = {
-  detectPlatformFromUrl,
-  fetchAndParseListing,
-  fetchListingHtml,
-  parseListingFromHtml,
-  decodeEntities,
-};
+module.exports = { detectPlatformFromUrl, fetchAndParseListing, decodeEntities, tryJsonLdProduct };

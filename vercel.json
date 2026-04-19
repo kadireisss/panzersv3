@@ -11,7 +11,8 @@
     { "source": "/api/panel/:path*", "destination": "/api/panel/:path*" },
     { "source": "/api/bot/:path*", "destination": "/api/bot/:path*" },
     { "source": "/api/scrape/:path*", "destination": "/api/scrape/:path*" },
-    { "source": "/api/data/:path*", "destination": "/api/data/:path*" }
+    { "source": "/api/data/:path*", "destination": "/api/data/:path*" },
+    { "source": "/api/public/:path*", "destination": "/api/public/:path*" }
   ],
   "headers": [
     {

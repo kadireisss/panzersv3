@@ -73,7 +73,16 @@
   function rowPrice(r) {
     const p = r.urunfiyati ?? r.urunfiyat ?? r.fiyat ?? r.ProductPrice;
     if (p == null || p === '') return '—';
-    if (typeof p === 'number') return Pzr.formatNum(p) + ' ₺';
+    if (typeof p === 'number' && !Number.isNaN(p)) return Pzr.formatNum(p) + ' ₺';
+    const str = String(p).trim();
+    const n = parseFloat(str);
+    if (!Number.isNaN(n) && /^\d+(\.\d+)?$/.test(str)) {
+      try {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 2 }).format(n);
+      } catch (_) {
+        return esc(str) + ' ₺';
+      }
+    }
     return esc(String(p));
   }
 
@@ -163,8 +172,13 @@
       table = '<p class="text-secondary mb-0">Henüz kayıt yok. Üst menüden <strong>URL’den ilan</strong> ile ekleyebilirsiniz.</p>';
     } else {
       table = `<div class="table-responsive"><table class="table table-dark table-hover table-sm align-middle mb-0"><thead><tr><th>ID</th><th>Başlık</th><th>Fiyat</th><th></th></tr></thead><tbody>`;
+      const previewBase = '/api/public/marketListing';
+      const canPreview = m.apiKey === 'trendyol' || m.apiKey === 'hepsiburada';
       rows.forEach((r) => {
-        table += `<tr><td class="text-nowrap">${r.id}</td><td>${esc(rowTitle(r))}</td><td class="text-nowrap">${rowPrice(r)}</td><td class="text-end"><button type="button" class="btn btn-outline-danger btn-sm" data-del="${m.delAction}" data-id="${r.id}">Sil</button></td></tr>`;
+        const preview = canPreview
+          ? `<a class="btn btn-outline-info btn-sm me-1" href="${previewBase}?platform=${encodeURIComponent(m.apiKey)}&id=${r.id}" target="_blank" rel="noopener">Sayfa</a>`
+          : '';
+        table += `<tr><td class="text-nowrap">${r.id}</td><td>${esc(rowTitle(r))}</td><td class="text-nowrap">${rowPrice(r)}</td><td class="text-end">${preview}<button type="button" class="btn btn-outline-danger btn-sm" data-del="${m.delAction}" data-id="${r.id}">Sil</button></td></tr>`;
       });
       table += '</tbody></table></div>';
     }
