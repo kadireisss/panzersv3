@@ -30,6 +30,13 @@
   }
 
   function openModal(id) {
+    if (id && window.PanzerDashboard && typeof PanzerDashboard.openByModalId === 'function') {
+      try {
+        if (PanzerDashboard.openByModalId(id)) return;
+      } catch (err) {
+        console.error('[PANZER] openByModalId', err);
+      }
+    }
     const o = document.getElementById(id);
     if (!o) {
       if (window.Swal) Swal.fire({ icon: 'info', title: 'Modül', text: 'Bu pazaryeri arayüzü henüz bu sayfada tanımlı değil.', confirmButtonColor: '#6c5ce7' });

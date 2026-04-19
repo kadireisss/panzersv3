@@ -2,24 +2,43 @@
 <html lang="tr" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — Sayfa Bulunamadı</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root{--accent:#6c5ce7}*{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e8e8ed;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
-    .code{font-size:8rem;font-weight:900;background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.5rem;animation:glitch 3s ease-in-out infinite}
-    @keyframes glitch{0%,90%,100%{transform:translate(0)}92%{transform:translate(-3px,2px)}94%{transform:translate(3px,-2px)}96%{transform:translate(-2px,-1px)}98%{transform:translate(2px,1px)}}
-    h2{font-size:1.5rem;font-weight:600;margin-bottom:.75rem}p{font-size:.95rem;color:#8b8b9e;margin-bottom:2rem;max-width:400px}
-    .back-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.75rem;background:linear-gradient(135deg,var(--accent),#5a4bd6);color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none}
-    .back-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(108,92,231,.3)}.ver{position:fixed;bottom:1rem;font-size:.7rem;color:#55556a}
-  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>PANZER · 404</title>
+  <link rel="shortcut icon" href="/BellaMain/assets/media/panzer-mark.png">
+  <link rel="apple-touch-icon" href="/BellaMain/assets/media/panzer-mark.png">
+  <script>
+    document.addEventListener('visibilitychange', function () {
+      document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER · 404';
+    });
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="/BellaMain/assets/css/panzer-brand.css?v=panzer3-2" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-auth.css?v=panzer3-2" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
-  <div class="code">404</div>
-  <h2>Sayfa Bulunamadı</h2>
-  <p>Aradığınız sayfa mevcut değil veya taşınmış olabilir.</p>
-  <a href="/signin" class="back-btn">← Ana Sayfaya Dön</a>
-  <div class="ver">PANZER v3</div>
+<body class="pzr-auth panzer-branded-page">
+  <div class="pzr-404">
+    <div class="pzr-404__inner">
+      <div class="pzr-404__dragon">
+        <img src="/BellaMain/assets/media/panzer-mark.png" alt="PANZER">
+      </div>
+      <div class="pzr-404__code">404</div>
+      <div class="pzr-404__title">Burada öyle bir sayfa yok.</div>
+      <p class="pzr-404__sub">Aradığın yer ya silindi, ya hiç olmadı, ya da yanlış adres yazdın.</p>
+      <a href="/signin" class="pzr-404__cta"><i class="fa fa-home"></i><span>Giriş</span></a>
+    </div>
+  </div>
+  <div class="panzer-brand-bar" role="contentinfo" aria-label="PANZER marka">
+    <div class="panzer-brand-bar__inner">
+      <img src="/BellaMain/assets/media/panzer-mark.png" alt="" class="panzer-brand-bar__logo" width="32" height="32" loading="lazy" decoding="async">
+      <span class="panzer-brand-bar__panzer">PANZER</span>
+      <span class="panzer-brand-bar__sep">·</span>
+      <span class="panzer-brand-bar__tag">the designedbybossxxlife · v3</span>
+    </div>
+  </div>
 </body>
 </html>

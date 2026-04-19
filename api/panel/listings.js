@@ -5,8 +5,10 @@ const { requireAuth } = require('../lib/auth');
 const TABLE_MAP = {
   sahibinden: 'ilan_sahibinden', dolap: 'ilan_dolap', letgo: 'ilan_letgo',
   pttavm: 'ilan_pttavm', turkcell: 'ilan_turkcell', shopier: 'ilan_shopier',
+  yurtici: 'yurtici',
   trendyol: 'ty_ilan', hepsiburada: 'hb_urun', migros: 'bella_mg_urunler',
-  pasaj: 'bella_pj_urunler', bim: 'bella_bim_products', a101: 'bella_a101_products',
+  pasaj: 'bella_pj_urunler', ptt3: 'bella_ptt3_urunler',
+  bim: 'bella_bim_products', a101: 'bella_a101_products',
   pttkargo: 'bella_pttkargo',
 };
 

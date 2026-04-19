@@ -5,6 +5,7 @@
     { "source": "/signup", "destination": "/BellaMain/signup.html" },
     { "source": "/dashboard", "destination": "/BellaMain/dashboard.html" },
     { "source": "/logout", "destination": "/BellaMain/logout.html" },
+    { "source": "/404", "destination": "/BellaMain/404.html" },
 
     { "source": "/api/auth/:path*", "destination": "/api/auth/:path*" },
     { "source": "/api/panel/:path*", "destination": "/api/panel/:path*" },
@@ -13,6 +14,14 @@
     { "source": "/api/data/:path*", "destination": "/api/data/:path*" }
   ],
   "headers": [
+    {
+      "source": "/BellaMain/dashboard.html",
+      "headers": [{ "key": "Cache-Control", "value": "private, no-store, max-age=0, must-revalidate" }]
+    },
+    {
+      "source": "/dashboard",
+      "headers": [{ "key": "Cache-Control", "value": "private, no-store, max-age=0, must-revalidate" }]
+    },
     {
       "source": "/api/(.*)",
       "headers": [

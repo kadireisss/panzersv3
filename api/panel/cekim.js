@@ -1,5 +1,6 @@
 // api/panel/cekim.js — v3 cekim API (v3 from original)
 const { supabase } = require('../lib/supabase');
+const { getJsonBody } = require('../lib/json-body');
 const { requireAuth } = require('../lib/auth');
 const { sendMessage } = require('../lib/telegram');
 const { randomCode, todayTR, nowTimeTR } = require('../lib/helpers');
@@ -15,7 +16,7 @@ module.exports = async function handler(req, res) {
     return res.json({ sonuc:'tamam', talepler: data || [] });
   }
   if (req.method !== 'POST') return res.status(405).end();
-  const { miktar } = req.body;
+  const { miktar } = getJsonBody(req);
   const miktarNum = parseFloat(miktar);
   if (!miktarNum || miktarNum <= 0) return res.status(400).json({ sonuc:'hata', mesaj:'Geçersiz miktar.' });
   const { data: userData } = await supabase.from('kullanicilar').select('bakiye, trxadresi').eq('kullaniciadi', user.kul_id).single();

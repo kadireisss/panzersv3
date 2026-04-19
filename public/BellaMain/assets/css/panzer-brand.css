@@ -1,27 +1,417 @@
-/* ═══════════════════════════════════════════════════════════════
-   panzer-brand.css — PANZER Marka Stilleri
-   Logo pulse, ejder glow, versiyon rozetleri
-   ═══════════════════════════════════════════════════════════════ */
+/* PANZER — the designedbybossxxlife (panel markası) */
+:root {
+  --panzer-bg: linear-gradient(90deg, #0a0a0a 0%, #1a0508 45%, #140404 100%);
+  --panzer-red: #8b0000;
+  --panzer-red-hot: #c41e3a;
+  --panzer-text: #f8f4f4;
+  --panzer-dim: #b8a8a8;
+}
 
-.pzr-logo-glow { filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.4)); transition: filter 0.4s ease; }
-.pzr-logo-glow:hover { filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.7)); }
+body.panzer-branded-page {
+  padding-bottom: 52px !important;
+  box-sizing: border-box;
+}
 
+.panzer-brand-bar {
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panzer-bg);
+  border-top: 1px solid rgba(196, 30, 58, 0.45);
+  box-shadow: 0 -4px 24px rgba(139, 0, 0, 0.35);
+}
+
+.panzer-brand-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  max-width: 100%;
+}
+
+.panzer-brand-bar__logo {
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.panzer-brand-bar__panzer {
+  font-family: Inter, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: var(--panzer-text);
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.55),
+    0 0 2px var(--panzer-red-hot);
+  text-transform: uppercase;
+}
+
+.panzer-brand-bar__sep {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 300;
+}
+
+.panzer-brand-bar__tag {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--panzer-dim);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 520px) {
+  .panzer-brand-bar__tag {
+    max-width: 42vw;
+  }
+}
+
+.panzer-dashboard-footer {
+  border-left: 3px solid var(--panzer-red-hot);
+  padding-left: 12px !important;
+}
+
+.panzer-dashboard-footer__logo {
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(255, 80, 80, 0.25);
+}
+
+.panzer-dashboard-footer__title {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #f5eded;
+  text-shadow: 0 0 10px rgba(196, 30, 58, 0.4);
+}
+
+.panzer-dashboard-footer__muted {
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: #c9b8b8;
+  margin-left: 6px;
+}
+
+.panzer-signin-title-sub {
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: #c41e3a !important;
+  text-transform: lowercase;
+  margin-top: 4px;
+}
+
+/* =========================================================
+ * PANZER · Dragon mark — global marka katmanı
+ * ========================================================= */
+
+.panzer-dragon {
+  display: inline-block;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 2px rgba(196, 30, 58, 0.45),
+    0 0 18px rgba(196, 30, 58, 0.55),
+    0 0 38px rgba(196, 30, 58, 0.25);
+  background: radial-gradient(circle, #2a0606 0%, #0a0303 100%);
+  flex-shrink: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  filter: saturate(1.1) contrast(1.05);
+}
+
+.panzer-dragon:hover {
+  transform: scale(1.06) rotate(-2deg);
+  box-shadow:
+    0 0 0 2px rgba(255, 80, 110, 0.85),
+    0 0 28px rgba(255, 80, 110, 0.75),
+    0 0 60px rgba(196, 30, 58, 0.45);
+  filter: saturate(1.25) contrast(1.1) brightness(1.06);
+}
+
+.panzer-dragon--pulse {
+  -webkit-animation: panzer-dragon-pulse 2.6s ease-in-out infinite;
+  animation: panzer-dragon-pulse 2.6s ease-in-out infinite;
+}
+
+@-webkit-keyframes panzer-dragon-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(196,30,58,0.45), 0 0 14px rgba(196,30,58,0.45), 0 0 32px rgba(196,30,58,0.18); }
+  50%      { box-shadow: 0 0 0 2px rgba(255,80,110,0.85), 0 0 26px rgba(255,80,110,0.7), 0 0 56px rgba(196,30,58,0.45); }
+}
+
+@keyframes panzer-dragon-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(196,30,58,0.45), 0 0 14px rgba(196,30,58,0.45), 0 0 32px rgba(196,30,58,0.18); }
+  50%      { box-shadow: 0 0 0 2px rgba(255,80,110,0.85), 0 0 26px rgba(255,80,110,0.7), 0 0 56px rgba(196,30,58,0.45); }
+}
+
+.panzer-dragon--ring {
+  padding: 4px;
+  background: conic-gradient(from 220deg, #c41e3a, #ff4d6d, #8b0000, #c41e3a);
+  -webkit-animation: panzer-dragon-spin 12s linear infinite;
+  animation: panzer-dragon-spin 12s linear infinite;
+}
+
+@-webkit-keyframes panzer-dragon-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes panzer-dragon-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.panzer-dragon--xl {
+  width: 120px !important;
+  height: 120px !important;
+}
+
+/* Bandı (kart-içi avatar) düz göster — yuvarlak yerine kare-kenarlı */
+.panzer-dragon--square {
+  border-radius: 14px;
+}
+
+/* Sidebar başlığı — büyük dragon + altında PANZER badge */
+.panzer-sidebar-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.panzer-sidebar-logo .panzer-dragon {
+  width: 92px;
+  height: 92px;
+}
+
+@media (max-width: 991px) {
+  .panzer-sidebar-logo .panzer-dragon { width: 64px; height: 64px; }
+}
+
+/* Inline marka çipi */
+.panzer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: rgba(139, 0, 0, 0.18);
+  border: 1px solid rgba(196, 30, 58, 0.45);
+  color: var(--panzer-text);
+  font-family: Inter, system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.panzer-chip .panzer-dragon {
+  box-shadow: 0 0 0 1px rgba(196, 30, 58, 0.6), 0 0 10px rgba(196, 30, 58, 0.45);
+}
+
+.panzer-chip__name {
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(196, 30, 58, 0.55);
+}
+
+.panzer-chip__sep {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 300;
+}
+
+.panzer-chip__tag {
+  color: var(--panzer-dim);
+  font-size: 0.78rem;
+}
+
+.panzer-chip--sm { font-size: 0.7rem; padding: 2px 8px 2px 2px; }
+.panzer-chip--sm .panzer-dragon { width: 16px; height: 16px; }
+.panzer-chip--sm .panzer-chip__name { font-size: 0.7rem; }
+.panzer-chip--sm .panzer-chip__tag { font-size: 0.7rem; }
+
+.panzer-chip--md { font-size: 0.82rem; }
+.panzer-chip--lg { font-size: 1rem; padding: 6px 14px 6px 6px; }
+.panzer-chip--lg .panzer-dragon { width: 28px; height: 28px; }
+
+/* Sayfa watermark'ı — sağ alt sönük ejder */
+.panzer-watermark {
+  position: fixed;
+  right: 20px;
+  bottom: 64px;
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+  opacity: 0.06;
+  z-index: 1;
+  -webkit-animation: panzer-watermark-float 9s ease-in-out infinite;
+  animation: panzer-watermark-float 9s ease-in-out infinite;
+}
+
+.panzer-watermark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(196, 30, 58, 0.45));
+}
+
+@-webkit-keyframes panzer-watermark-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.06; }
+  50%      { transform: translateY(-12px) rotate(2deg); opacity: 0.10; }
+}
+
+@keyframes panzer-watermark-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.06; }
+  50%      { transform: translateY(-12px) rotate(2deg); opacity: 0.10; }
+}
+
+@media (max-width: 768px) {
+  .panzer-watermark { width: 130px; height: 130px; right: 6px; bottom: 60px; opacity: 0.05; }
+}
+
+/* Hero (V5VgjLU0jsDe tooling sayfaları) */
+.panzer-hero {
+  position: relative;
+  padding: 36px 24px 28px;
+  text-align: center;
+  margin: 24px auto 18px;
+  max-width: 520px;
+}
+
+.panzer-hero__halo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(196, 30, 58, 0.45), transparent 55%);
+  filter: blur(12px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.panzer-hero .panzer-dragon {
+  position: relative;
+  z-index: 1;
+}
+
+.panzer-hero__title {
+  position: relative;
+  z-index: 1;
+  margin-top: 14px;
+  font-family: Inter, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: #fff;
+  font-size: 1.75rem;
+  text-shadow: 0 0 16px rgba(196, 30, 58, 0.6), 0 0 4px #000;
+  text-transform: uppercase;
+}
+
+.panzer-hero__sub {
+  position: relative;
+  z-index: 1;
+  margin-top: 6px;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--panzer-dim);
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+
+/* Loader (opsiyonel — body'e .panzer-loading verilirse görünür) */
+.panzer-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 4, 4, 0.85);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+body.panzer-loading .panzer-loader-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── v3 dashboard (eski pzr-auth bundle olmadan) ── */
+.pzr-logo-glow {
+  filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.45));
+  transition: filter 0.35s ease;
+}
+.pzr-logo-glow:hover {
+  filter: drop-shadow(0 0 36px rgba(108, 92, 231, 0.75));
+}
 .pzr-brand-badge {
-  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem;
-  background: rgba(108, 92, 231, 0.12); border: 1px solid rgba(108, 92, 231, 0.25);
-  border-radius: 20px; font-size: 0.7rem; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--pzr-accent, #6c5ce7);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(108, 92, 231, 0.12);
+  border: 1px solid rgba(108, 92, 231, 0.28);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b8a8ff;
+}
+aside .pzr-brand-footer {
+  text-align: center;
+  padding: 1rem 0.75rem 0;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.06em;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: auto;
+}
+aside .pzr-brand-footer strong {
+  color: #6c5ce7;
+  font-weight: 800;
 }
 
-.pzr-version-tag { font-family: 'Roboto Mono', monospace; font-size: 0.65rem; color: var(--pzr-text-muted, #55556a); letter-spacing: 1px; }
-
-.pzr-brand-footer {
-  text-align: center; padding: 1.5rem 0; font-size: 0.75rem; color: var(--pzr-text-muted, #55556a);
-  letter-spacing: 0.5px; border-top: 1px solid rgba(255, 255, 255, 0.04); margin-top: 2rem;
+/* Auth: PHP ile aynı hero GIF alanı */
+.pzr-auth__hero-gif-wrap {
+  margin-top: 1.25rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  max-width: 100%;
+  width: min(300px, 100%);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 }
-.pzr-brand-footer strong { color: var(--pzr-accent, #6c5ce7); font-weight: 700; }
+.pzr-auth__hero-gif-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
 
-.pzr-masked::after { content: '**'; color: var(--pzr-text-muted, #55556a); }
+/* Pazaryeri satırında site ikonu (Google favicon) */
+.pzr-mkt-favicon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
 
-@keyframes pzr-dragon-breathe { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-.pzr-dragon-anim { animation: pzr-dragon-breathe 3s ease-in-out infinite; }
+.pzr-auth .alert-danger {
+  background: rgba(196, 30, 58, 0.22) !important;
+  border: 1px solid rgba(255, 80, 110, 0.45) !important;
+  color: #ffe8ec !important;
+}

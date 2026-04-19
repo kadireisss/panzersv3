@@ -3,6 +3,7 @@
 // Body içindeki action key'e göre switch-case çalışır
 
 const formidable = require('formidable');
+const { getJsonBody } = require('../lib/json-body');
 const { supabase } = require('../lib/supabase');
 const { getSession, isAdmin, isModOrAdmin, canTouchRecord, sifrecozWadanz } = require('../lib/auth');
 const { randomCode, randomId, todayTR, nowTimeTR, isAllowedImage } = require('../lib/helpers');
@@ -43,13 +44,15 @@ module.exports = async function handler(req, res) {
   const session = getSession(req);
   if (!session) return res.status(401).json({ sonuc: 'yetkisiz' });
 
-  let fields = req.body || {};
+  let fields = {};
   let files = {};
   const ct = req.headers['content-type'] || '';
   if (ct.includes('multipart/form-data')) {
     const parsed = await parseForm(req);
     fields = parsed.fields;
     files = parsed.files;
+  } else {
+    fields = getJsonBody(req);
   }
 
   // PANEL AYARLAR

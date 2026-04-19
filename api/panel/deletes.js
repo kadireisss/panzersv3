@@ -1,5 +1,6 @@
 // api/panel/deletes.js — Tüm silme işlemleri
 const { supabase } = require('../lib/supabase');
+const { getJsonBody } = require('../lib/json-body');
 const { getSession, isAdmin, canTouchRecord } = require('../lib/auth');
 const { deleteImages, deleteImage } = require('../lib/upload');
 
@@ -7,7 +8,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ sonuc: 'method_not_allowed' });
   const session = getSession(req);
   if (!session) return res.status(401).json({ sonuc: 'yetkisiz' });
-  const { action, id: rawId } = req.body || {};
+  const { action, id: rawId } = getJsonBody(req);
   const id = parseInt(rawId);
   if (!action || !id) return res.status(400).json({ sonuc: 'eksik_parametre' });
 

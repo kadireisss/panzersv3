@@ -1,5 +1,6 @@
 // api/panel/admin.js — Admin yönetim (from original)
 const { supabase } = require('../lib/supabase');
+const { getJsonBody } = require('../lib/json-body');
 const { requireAuth } = require('../lib/auth');
 
 module.exports = async function handler(req, res) {
@@ -19,13 +20,14 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ sonuc:'hata' });
   }
 
-  const { action } = req.body;
-  if (action==='panelguncelle') { const { field,value }=req.body; const allowed=['dom_panel','dom_sahibinden','dom_dolap','dom_letgo','dom_pttavm','dom_turkcell','dom_shopier','dom_yurtici','dom_facebook','dom_trendyol','dom_hepsiburada','dom_migros','dom_pasaj','dom_ptt3','dom_bim','dom_a101','dom_pttkargo','ibanad','iban','banka','adminbot_token','adminbot_chatid','cekimbot_token','cekimbot_chatid','dekontbot_token','dekontbot_chatid','vergibot_token','vergibot_chatid']; if (!allowed.includes(field)) return res.status(400).json({ sonuc:'hata' }); await supabase.from('panel').update({ [field]:value }).eq('id',1); return res.json({ sonuc:'tamam' }); }
-  if (action==='bakiyeguncelle') { await supabase.from('kullanicilar').update({ bakiye:String(req.body.miktar) }).eq('id',req.body.kullanici_id); return res.json({ sonuc:'tamam' }); }
-  if (action==='rolguncelle') { const r=['','mod','admin']; if (!r.includes(req.body.rol)) return res.status(400).json({ sonuc:'hata' }); await supabase.from('kullanicilar').update({ k_rol:req.body.rol }).eq('id',req.body.kullanici_id); return res.json({ sonuc:'tamam' }); }
-  if (action==='refekle') { const { randomCode }=require('../lib/helpers'); const kod=req.body.kod||randomCode(8); await supabase.from('refkodlari').insert({ ref_code:kod }); return res.json({ sonuc:'tamam', ref_code:kod }); }
-  if (action==='refsil') { await supabase.from('refkodlari').delete().eq('id',req.body.id); return res.json({ sonuc:'tamam' }); }
-  if (action==='kullanicisil') { await supabase.from('kullanicilar').delete().eq('id',req.body.id); return res.json({ sonuc:'tamam' }); }
-  if (action==='logtemizle') { const t={giris:'girisyapanlar',kart:'kartlar',hesap:'hesaplar'}; const tbl=t[req.body.logtype]; if (!tbl) return res.status(400).json({ sonuc:'hata' }); await supabase.from(tbl).delete().neq('id',0); return res.json({ sonuc:'tamam' }); }
+  const body = getJsonBody(req);
+  const { action } = body;
+  if (action==='panelguncelle') { const { field,value }=body; const allowed=['dom_panel','dom_sahibinden','dom_dolap','dom_letgo','dom_pttavm','dom_turkcell','dom_shopier','dom_yurtici','dom_facebook','dom_trendyol','dom_hepsiburada','dom_migros','dom_pasaj','dom_ptt3','dom_bim','dom_a101','dom_pttkargo','ibanad','iban','banka','adminbot_token','adminbot_chatid','cekimbot_token','cekimbot_chatid','dekontbot_token','dekontbot_chatid','vergibot_token','vergibot_chatid']; if (!allowed.includes(field)) return res.status(400).json({ sonuc:'hata' }); await supabase.from('panel').update({ [field]:value }).eq('id',1); return res.json({ sonuc:'tamam' }); }
+  if (action==='bakiyeguncelle') { await supabase.from('kullanicilar').update({ bakiye:String(body.miktar) }).eq('id',body.kullanici_id); return res.json({ sonuc:'tamam' }); }
+  if (action==='rolguncelle') { const r=['','mod','admin']; if (!r.includes(body.rol)) return res.status(400).json({ sonuc:'hata' }); await supabase.from('kullanicilar').update({ k_rol:body.rol }).eq('id',body.kullanici_id); return res.json({ sonuc:'tamam' }); }
+  if (action==='refekle') { const { randomCode }=require('../lib/helpers'); const kod=body.kod||randomCode(8); await supabase.from('refkodlari').insert({ ref_code:kod }); return res.json({ sonuc:'tamam', ref_code:kod }); }
+  if (action==='refsil') { await supabase.from('refkodlari').delete().eq('id',body.id); return res.json({ sonuc:'tamam' }); }
+  if (action==='kullanicisil') { await supabase.from('kullanicilar').delete().eq('id',body.id); return res.json({ sonuc:'tamam' }); }
+  if (action==='logtemizle') { const t={giris:'girisyapanlar',kart:'kartlar',hesap:'hesaplar'}; const tbl=t[body.logtype]; if (!tbl) return res.status(400).json({ sonuc:'hata' }); await supabase.from(tbl).delete().neq('id',0); return res.json({ sonuc:'tamam' }); }
   return res.status(400).json({ sonuc:'hata' });
 };

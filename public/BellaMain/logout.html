@@ -4,25 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>PANZER — Çıkış</title>
+  <title>PANZER · Çıkış</title>
+  <link rel="shortcut icon" href="/BellaMain/assets/media/panzer-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link href="/BellaMain/assets/css/pzr-auth.css" rel="stylesheet">
+  <link href="/BellaMain/assets/css/panzer-brand.css?v=panzer3-2" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-auth.css?v=panzer3-2" rel="stylesheet">
   <style>
-    .pzr-logout-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;gap:1.5rem}
-    .pzr-logout-center h2{font-size:1.5rem;font-weight:700}
-    .pzr-logout-center p{color:#8b8b9e}
-    .pzr-spinner{width:40px;height:40px;border:3px solid rgba(108,92,231,.2);border-top-color:#6c5ce7;border-radius:50%;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .pzr-logout-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem calc(2rem + 52px);
+      text-align: center;
+      font-family: Inter, system-ui, sans-serif;
+    }
+    .pzr-logout-inner { max-width: 360px; }
+    .pzr-logout-inner h2 { font-size: 1.35rem; font-weight: 800; color: #fff; margin: 1rem 0 0.5rem; letter-spacing: -0.02em; }
+    .pzr-logout-inner p { color: var(--pzr-text-2, #a8b0c0); font-size: 0.9rem; }
+    .pzr-spinner {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto;
+      border: 3px solid rgba(196, 30, 58, 0.25);
+      border-top-color: #ff4d6d;
+      border-radius: 50%;
+      animation: pzrLogoutSpin 0.75s linear infinite;
+    }
+    @keyframes pzrLogoutSpin { to { transform: rotate(360deg); } }
   </style>
 </head>
-<body class="pzr-auth-body">
-  <div class="pzr-logout-center">
-    <div class="pzr-spinner"></div>
-    <h2>Çıkış yapılıyor...</h2>
-    <p>Güvenli çıkış sağlanıyor, lütfen bekleyin.</p>
+<body class="pzr-auth panzer-branded-page">
+  <div class="pzr-logout-wrap">
+    <div class="pzr-logout-inner">
+      <img src="/BellaMain/assets/media/panzer-mark.png" alt="PANZER" width="72" height="72" style="border-radius:50%;box-shadow:0 0 24px rgba(196,30,58,0.35)">
+      <div class="pzr-spinner" style="margin-top:1.25rem"></div>
+      <h2>Çıkış yapılıyor…</h2>
+      <p>Oturumun güvenli şekilde sonlandırılıyor.</p>
+    </div>
+  </div>
+  <div class="panzer-brand-bar" role="contentinfo" aria-label="PANZER marka">
+    <div class="panzer-brand-bar__inner">
+      <img src="/BellaMain/assets/media/panzer-mark.png" alt="" class="panzer-brand-bar__logo" width="32" height="32" loading="lazy">
+      <span class="panzer-brand-bar__panzer">PANZER</span>
+      <span class="panzer-brand-bar__sep">·</span>
+      <span class="panzer-brand-bar__tag">the designedbybossxxlife</span>
+    </div>
   </div>
   <script>
-    (async function(){try{await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'})}catch{}setTimeout(()=>{window.location.href='/signin'},1500)})();
+    (async function () {
+      try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch (e) {}
+      setTimeout(function () { window.location.href = '/signin'; }, 1200);
+    })();
   </script>
 </body>
 </html>
