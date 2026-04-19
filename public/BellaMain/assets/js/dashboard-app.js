@@ -355,6 +355,11 @@
     return Pzr.apiCall('/api/panel/admin', body, 'POST');
   }
 
+  function panelFieldInput(key, label, value) {
+    const v = value != null ? String(value) : '';
+    return `<div><label>${esc(label)}</label><input type="text" class="form-control panel-field ${/token/i.test(key) ? 'font-monospace small' : ''}" data-field="${esc(key)}" value="${esc(v)}" autocomplete="off" spellcheck="false"></div>`;
+  }
+
   async function renderAyarlar() {
     showDynamic('<div class="p-4 text-secondary">Yükleniyor…</div>');
     const data = await adminGet('panel');
@@ -363,8 +368,8 @@
       return;
     }
     const p = data.panel;
-    const fields = [
-      ['dom_panel', 'Panel domain'],
+    const domainFields = [
+      ['dom_panel', 'Panel domain (kök)'],
       ['dom_sahibinden', 'Sahibinden'],
       ['dom_dolap', 'Dolap'],
       ['dom_letgo', 'Letgo'],
@@ -372,6 +377,7 @@
       ['dom_turkcell', 'Turkcell'],
       ['dom_shopier', 'Shopier'],
       ['dom_yurtici', 'Yurtiçi'],
+      ['dom_facebook', 'Facebook'],
       ['dom_trendyol', 'Trendyol'],
       ['dom_hepsiburada', 'Hepsiburada'],
       ['dom_migros', 'Migros'],
@@ -380,26 +386,63 @@
       ['dom_bim', 'Bim'],
       ['dom_a101', 'A101'],
       ['dom_pttkargo', 'PTT Kargo'],
-      ['ibanad', 'IBAN adı'],
-      ['iban', 'IBAN'],
-      ['banka', 'Banka'],
-      ['adminbot_token', 'Admin bot token'],
-      ['adminbot_chatid', 'Admin bot chat id'],
-      ['cekimbot_token', 'Çekim bot token'],
-      ['cekimbot_chatid', 'Çekim bot chat id'],
     ];
-    let inputs = '';
-    fields.forEach(([key, label]) => {
-      const v = p[key] != null ? String(p[key]) : '';
-      inputs += `<div class="mb-2"><label class="form-label small text-secondary mb-0">${esc(label)}</label><input class="form-control form-control-sm panel-field" data-field="${esc(key)}" value="${esc(v)}"></div>`;
-    });
+    const bankFields = [['ibanad', 'IBAN hesap adı'], ['iban', 'IBAN numarası'], ['banka', 'Banka adı']];
+    const botFields = [
+      ['adminbot_token', 'Admin bot — token'],
+      ['adminbot_chatid', 'Admin bot — chat ID'],
+      ['cekimbot_token', 'Çekim bot — token'],
+      ['cekimbot_chatid', 'Çekim bot — chat ID'],
+      ['dekontbot_token', 'Dekont bot — token'],
+      ['dekontbot_chatid', 'Dekont bot — chat ID'],
+      ['vergibot_token', 'Vergi bot — token'],
+      ['vergibot_chatid', 'Vergi bot — chat ID'],
+    ];
+    const accId = 'panelSettingsAcc';
+    const gridDom = domainFields.map(([k, l]) => panelFieldInput(k, l, p[k])).join('');
+    const gridBank = bankFields.map(([k, l]) => panelFieldInput(k, l, p[k])).join('');
+    const gridBot = botFields.map(([k, l]) => panelFieldInput(k, l, p[k])).join('');
     showDynamic(`
-      <div class="pzr-table-wrapper m-0">
-        <div class="pzr-table-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <span class="pzr-table-title">Panel ayarları</span>
-          <button type="button" class="btn btn-sm btn-primary" id="btnPanelSave">Tümünü kaydet</button>
+      <div class="pzr-table-wrapper m-0 pzr-settings-shell">
+        <div class="pzr-settings-head">
+          <span class="pzr-table-title"><i class="fa fa-sliders text-primary me-2"></i>Panel ayarları</span>
+          <button type="button" class="btn btn-primary btn-sm px-3" id="btnPanelSave"><i class="fa fa-save me-1"></i>Tümünü kaydet</button>
         </div>
-        <div style="padding:1.25rem;max-width:640px">${inputs}<p class="small text-muted mt-2 mb-0">Kaydet tüm alanları API ile günceller.</p></div>
+        <div class="pzr-settings-body">
+          <div class="accordion pzr-settings-accordion" id="${accId}">
+            <div class="accordion-item pzr-acc-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button pzr-acc-button" type="button" data-bs-toggle="collapse" data-bs-target="#pzrSetDom" aria-expanded="true">
+                  <i class="fa fa-globe me-2 text-info"></i>Pazaryeri domainleri
+                </button>
+              </h2>
+              <div id="pzrSetDom" class="accordion-collapse collapse show" data-bs-parent="#${accId}">
+                <div class="accordion-body pzr-acc-body"><div class="pzr-field-grid">${gridDom}</div></div>
+              </div>
+            </div>
+            <div class="accordion-item pzr-acc-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button pzr-acc-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pzrSetBank" aria-expanded="false">
+                  <i class="fa fa-university me-2 text-warning"></i>Banka &amp; IBAN
+                </button>
+              </h2>
+              <div id="pzrSetBank" class="accordion-collapse collapse" data-bs-parent="#${accId}">
+                <div class="accordion-body pzr-acc-body"><div class="pzr-field-grid">${gridBank}</div></div>
+              </div>
+            </div>
+            <div class="accordion-item pzr-acc-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button pzr-acc-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pzrSetBot" aria-expanded="false">
+                  <i class="fa fa-paper-plane me-2 text-success"></i>Telegram botları
+                </button>
+              </h2>
+              <div id="pzrSetBot" class="accordion-collapse collapse" data-bs-parent="#${accId}">
+                <div class="accordion-body pzr-acc-body"><div class="pzr-field-grid">${gridBot}</div></div>
+              </div>
+            </div>
+          </div>
+          <p class="pzr-settings-foot mb-0"><i class="fa fa-info-circle me-1"></i>Token alanları şifre gibi maskelenir; kaydettiğinde mevcut değerler korunur veya güncellenir.</p>
+        </div>
       </div>`);
     document.getElementById('btnPanelSave')?.addEventListener('click', async () => {
       const els = document.querySelectorAll('.panel-field');
@@ -605,11 +648,40 @@
       btn.setAttribute('data-pzr-api', m.apiKey);
       btn.setAttribute('data-modal-id', m.id);
       const fav = faviconUrl(m.apiKey);
-      const icon = fav ? `<img src="${fav}" alt="" class="pzr-mkt-favicon" width="22" height="22" loading="lazy" referrerpolicy="no-referrer">` : '';
-      const badge = `<span class="pzr-market-badge" style="background:${m.color}">${m.badge}</span>`;
-      btn.innerHTML = `${icon}${badge}<span class="pzr-mkt-label">${m.label}</span>`;
+      const ico = fav
+        ? `<img src="${fav}" alt="" class="pzr-mkt-favicon" width="26" height="26" loading="lazy" referrerpolicy="no-referrer">`
+        : `<span class="pzr-mkt-fallback" style="background:${esc(m.color)}">${esc(m.badge)}</span>`;
+      btn.innerHTML = `
+        <span class="pzr-mkt-accent" style="background:${esc(m.color)}"></span>
+        <span class="pzr-mkt-inner">
+          <span class="pzr-mkt-ico-wrap">${ico}</span>
+          <span class="pzr-mkt-txt">
+            <span class="pzr-mkt-name">${esc(m.label)}</span>
+            <span class="pzr-mkt-hint">İlanlarını gör</span>
+          </span>
+          <i class="fa fa-angle-right pzr-mkt-chev" aria-hidden="true"></i>
+        </span>`;
       grid.appendChild(btn);
     });
+  }
+
+  function bindQuickTiles() {
+    const root = document.querySelector('.pzr-content');
+    if (!root || root.dataset.pzrQuickBound === '1') return;
+    root.dataset.pzrQuickBound = '1';
+    root.addEventListener('click', (e) => {
+      const a = e.target.closest('a.pzr-quick-tile[data-page]');
+      if (!a) return;
+      e.preventDefault();
+      navigate(a.getAttribute('data-page'));
+    });
+  }
+
+  function bindDashUrlImport() {
+    const b = document.getElementById('btnDashUrlImport');
+    if (!b || b.dataset.pzrBound === '1') return;
+    b.dataset.pzrBound = '1';
+    b.addEventListener('click', () => promptUrlImport());
   }
 
   function bindSidebarNav() {
@@ -637,6 +709,8 @@
     buildMarketGrid();
     bindSidebarNav();
     bindUrlImportButton();
+    bindQuickTiles();
+    bindDashUrlImport();
   }
 
   window.PanzerDashboard = {

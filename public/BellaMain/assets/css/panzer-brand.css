@@ -398,18 +398,6 @@ aside .pzr-brand-footer strong {
   vertical-align: middle;
 }
 
-/* Pazaryeri satırında site ikonu (Google favicon) */
-.pzr-mkt-favicon {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  object-fit: contain;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.92);
-  padding: 2px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
 .pzr-auth .alert-danger {
   background: rgba(196, 30, 58, 0.22) !important;
   border: 1px solid rgba(255, 80, 110, 0.45) !important;

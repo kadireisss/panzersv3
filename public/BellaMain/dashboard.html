@@ -13,9 +13,9 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-  <link href="/BellaMain/assets/css/pzr-dashboard.css?v=panzer3-2" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-dashboard.css?v=panzer3-4" rel="stylesheet">
   <link href="/BellaMain/assets/css/pzr-modals.css" rel="stylesheet">
-  <link href="/BellaMain/assets/css/panzer-brand.css?v=panzer3-2" rel="stylesheet">
+  <link href="/BellaMain/assets/css/panzer-brand.css?v=panzer3-4" rel="stylesheet">
 </head>
 <body>
 
@@ -36,6 +36,7 @@
       </div>
       <div class="pzr-nav-section">
         <div class="pzr-nav-section-title">Pazaryerleri</div>
+        <p class="pzr-market-intro">Aşağıdan mağazayı seç; ilan listen açılır. Üst çubuktan <strong>URL’den ilan</strong> ile otomatik ekleyebilirsin.</p>
         <div class="pzr-market-grid" id="marketGrid"></div>
       </div>
       <div class="pzr-nav-section" id="adminSection" style="display:none">
@@ -72,7 +73,17 @@
 
     <section class="pzr-content">
       <div id="page-dashboard">
-        <h5 style="margin-bottom:1.5rem;font-weight:700" id="welcomeText">Hoş geldin</h5>
+        <div class="pzr-dash-hero">
+          <div>
+            <h5 id="welcomeText">Hoş geldin</h5>
+            <p>Bakiye, Telegram ve çekim akışın tek ekranda. Pazaryeri ilanlarını soldan seç; hızlı işlemler için aşağıdaki kısayolları kullan.</p>
+          </div>
+          <div class="pzr-dash-actions">
+            <button type="button" class="pzr-quick-tile" id="btnDashUrlImport"><i class="fa fa-link"></i> URL’den ilan</button>
+            <a href="#" class="pzr-quick-tile" data-page="profil"><i class="fa fa-user"></i> Profil</a>
+            <a href="#" class="pzr-quick-tile" data-page="cekim"><i class="fa fa-money"></i> Çekim</a>
+          </div>
+        </div>
         <div class="pzr-stats-grid">
           <div class="pzr-stat-card accent">
             <div class="pzr-stat-label">Bakiye</div>
@@ -96,10 +107,16 @@
           </div>
         </div>
         <div class="pzr-table-wrapper">
-          <div class="pzr-table-header"><span class="pzr-table-title">🐉 Panzer Hızlı Özet</span></div>
-          <div style="padding:1.5rem;color:#8b8b9e;font-size:0.9rem">
-            <p>Sol menüden pazaryerlerini seçerek ilanlarınızı yönetebilir, yeni ilan ekleyebilirsiniz.</p>
-            <p style="margin-top:0.75rem">Telegram bot ile hesabınızı doğrulamak için <code>/onay</code> komutunu kullanın.</p>
+          <div class="pzr-table-header"><span class="pzr-table-title">Hızlı özet</span></div>
+          <div class="pzr-summary-body">
+            <div class="pzr-summary-card">
+              <h6><i class="fa fa-shopping-cart"></i> Pazaryeri ilanları</h6>
+              <p>Sol menüdeki pazaryeri kartlarına tıkla: ilanların tablo halinde listelenir, silebilir veya yeni kayıt için üstteki <strong>URL’den ilan</strong> butonunu kullan.</p>
+            </div>
+            <div class="pzr-summary-card">
+              <h6><i class="fa fa-paper-plane"></i> Telegram</h6>
+              <p>Hesabını doğrulamak için botta <code>/onay KODUN</code> komutunu kullan. TG doğrulama kodun istatistik kartında görünür.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -112,9 +129,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/BellaMain/assets/js/general.js?v=panzer3-3"></script>
-<script src="/BellaMain/assets/js/iller.js?v=panzer3-3"></script>
-<script src="/BellaMain/assets/js/dashboard-app.js?v=panzer3-3"></script>
+<script src="/BellaMain/assets/js/general.js?v=panzer3-4"></script>
+<script src="/BellaMain/assets/js/iller.js?v=panzer3-4"></script>
+<script src="/BellaMain/assets/js/dashboard-app.js?v=panzer3-4"></script>
 
 <script>
 (function () {
