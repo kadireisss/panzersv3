@@ -9,6 +9,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# PHP monorepo aynası (npm run sync-php-monorepo). Vercel’de tam PHP için: sync → bu satırı sil → php-app’i commit’le.
+php-app/
+
 # Supabase agent-skills (yerel: npx skills add supabase/agent-skills)
 .agents/
 .claude/

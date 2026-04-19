@@ -6,7 +6,8 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'Serverless — no build step'",
+    "build": "node scripts/vercel-build.mjs",
+    "sync-php-monorepo": "node scripts/sync-php-monorepo.mjs",
     "seed": "node scripts/seed.js",
     "db:apply": "node scripts/apply-schema.js",
     "setup:all": "node scripts/setup-all.js",
