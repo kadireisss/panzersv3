@@ -1,4 +1,4 @@
-// POST /api/panel/importListing — JSON { url } — ilan URL'sinden otomatik kayıt
+// POST /api/panel/importListing — JSON { url, html? } — ilan URL'sinden otomatik kayıt (html opsiyonel: tarayıcı kaynağı)
 const { supabase } = require('../lib/supabase');
 const { requireAuth } = require('../lib/auth');
 const { getJsonBody } = require('../lib/json-body');
@@ -16,6 +16,12 @@ module.exports = async function handler(req, res) {
     const body = getJsonBody(req);
     const rawUrl = typeof body.url === 'string' ? body.url.trim() : '';
     if (!rawUrl) return res.status(400).json({ sonuc: 'hata', mesaj: 'url alanı gerekli.' });
+
+    let pastedHtml =
+      typeof body.html === 'string' && body.html.trim() ? String(body.html) : '';
+    if (pastedHtml && Buffer.byteLength(pastedHtml, 'utf8') > 2_500_000) {
+      pastedHtml = Buffer.from(pastedHtml, 'utf8').subarray(0, 2_500_000).toString('utf8');
+    }
 
     let normalized;
     try {
@@ -36,7 +42,7 @@ module.exports = async function handler(req, res) {
     let parsed;
     try {
       parsed = await Promise.race([
-        fetchAndParseListing(normalized),
+        fetchAndParseListing(normalized, pastedHtml ? { html: pastedHtml } : {}),
         new Promise((_, rej) => setTimeout(() => rej(new Error('İçe aktarma zaman aşımı')), IMPORT_MAX_MS)),
       ]);
     } catch (e) {

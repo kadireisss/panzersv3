@@ -1,6 +1,10 @@
 /**
  * İlan URL → platform + HTML'den başlık/fiyat/görsel (og + JSON-LD, basit regex).
- * Bazı siteler sunucu IP'sini engelleyebilir; bu durumda bookmarklet yedek akıştır.
+ * Bazı siteler sunucu IP'sini engelleyebilir; bookmarklet veya importListing ile gönderilen html yedek akıştır.
+ *
+ * IMPORT_LISTING_FETCH_DELEGATE (isteğe bağlı): Kendi HTTPS endpoint'inize POST { url } gönderilir;
+ * yanıt JSON { html } veya düz HTML. IMPORT_LISTING_FETCH_DELEGATE_SECRET varsa Authorization: Bearer … eklenir.
+ * Yasal uyum ve hedef site koşulları kullanıcıya aittir.
  */
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -131,36 +135,12 @@ function bodyBufferWithTimeout(res, ms) {
   ]);
 }
 
-async function fetchAndParseListing(url) {
-  const ctrl = new AbortController();
-  const FETCH_HEAD_MS = 14000;
-  const BODY_READ_MS = 12000;
-  const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
-  let res;
-  try {
-    res = await fetch(url, {
-      signal: ctrl.signal,
-      headers: {
-        'User-Agent': UA,
-        Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
-      },
-      redirect: 'follow',
-    });
-  } finally {
-    clearTimeout(t);
-  }
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  let buf;
-  try {
-    buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
-  } catch (e) {
-    if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
-    throw e;
-  }
-  const max = 2_500_000;
-  const slice = buf.byteLength > max ? buf.slice(0, max) : buf;
-  let html = Buffer.from(slice).toString('utf8');
+const FETCH_HEAD_MS = 14000;
+const BODY_READ_MS = 12000;
+const HTML_MAX_BYTES = 2_500_000;
+
+function parseListingFromHtml(htmlRaw) {
+  let html = typeof htmlRaw === 'string' ? htmlRaw : '';
   if (html.charCodeAt(0) === 0xfeff) html = html.slice(1);
 
   const ld = tryJsonLdProduct(html);
@@ -188,4 +168,94 @@ async function fetchAndParseListing(url) {
   return { title, price, description, images };
 }
 
-module.exports = { detectPlatformFromUrl, fetchAndParseListing, decodeEntities };
+async function fetchListingHtml(url) {
+  const delegate = (process.env.IMPORT_LISTING_FETCH_DELEGATE || '').trim();
+  if (delegate) {
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json, text/html;q=0.9,*/*;q=0.8',
+    };
+    const secret = (process.env.IMPORT_LISTING_FETCH_DELEGATE_SECRET || '').trim();
+    if (secret) headers.Authorization = `Bearer ${secret}`;
+
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
+    let res;
+    try {
+      res = await fetch(delegate, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ url }),
+        signal: ctrl.signal,
+        redirect: 'follow',
+      });
+    } finally {
+      clearTimeout(t);
+    }
+    if (!res.ok) throw new Error(`Delegasyon HTTP ${res.status}`);
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+    if (ct.includes('application/json')) {
+      const j = await res.json();
+      if (j && typeof j.html === 'string' && j.html.length) return j.html;
+      throw new Error('Delegasyon: yanıtta html alanı yok veya boş');
+    }
+    let buf;
+    try {
+      buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
+    } catch (e) {
+      if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
+      throw e;
+    }
+    const slice = buf.byteLength > HTML_MAX_BYTES ? buf.slice(0, HTML_MAX_BYTES) : buf;
+    return Buffer.from(slice).toString('utf8');
+  }
+
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
+  let res;
+  try {
+    res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: {
+        'User-Agent': UA,
+        Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
+      },
+      redirect: 'follow',
+    });
+  } finally {
+    clearTimeout(t);
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  let buf;
+  try {
+    buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
+    throw e;
+  }
+  const slice = buf.byteLength > HTML_MAX_BYTES ? buf.slice(0, HTML_MAX_BYTES) : buf;
+  return Buffer.from(slice).toString('utf8');
+}
+
+/** @param {string} url @param {{ html?: string }} [opts] */
+async function fetchAndParseListing(url, opts = {}) {
+  let html;
+  if (opts.html != null && String(opts.html).trim()) {
+    html = String(opts.html);
+    if (Buffer.byteLength(html, 'utf8') > HTML_MAX_BYTES) {
+      html = Buffer.from(html, 'utf8').subarray(0, HTML_MAX_BYTES).toString('utf8');
+    }
+  } else {
+    html = await fetchListingHtml(url);
+  }
+  return parseListingFromHtml(html);
+}
+
+module.exports = {
+  detectPlatformFromUrl,
+  fetchAndParseListing,
+  fetchListingHtml,
+  parseListingFromHtml,
+  decodeEntities,
+};
