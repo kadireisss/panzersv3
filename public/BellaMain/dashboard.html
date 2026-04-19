@@ -59,6 +59,7 @@
         <h4 id="pageTitle">Dashboard</h4>
       </div>
       <div class="pzr-topbar-right">
+        <button type="button" class="pzr-btn-url-import" id="btnUrlImport" title="Pazaryeri ilan linkini yapıştır — otomatik kayıt">＋ URL’den ilan</button>
         <span class="pzr-brand-badge">🐉 v3</span>
         <div class="pzr-user-chip" id="userChip">
           <img src="" alt="" class="pzr-user-avatar" id="userAvatar" onerror="this.style.display='none'">
@@ -191,6 +192,34 @@
       window.location.href = '/signin';
     }
   })();
+
+  document.getElementById('btnUrlImport')?.addEventListener('click', async () => {
+    if (!window.Swal) return;
+    const { value: url, isConfirmed } = await Swal.fire({
+      title: 'İlan URL’si',
+      input: 'text',
+      inputLabel: 'Pazaryeri ürün / ilan adresini yapıştırın',
+      inputPlaceholder: 'https://www.sahibinden.com/ilan/...',
+      showCancelButton: true,
+      confirmButtonText: 'Oluştur',
+      cancelButtonText: 'İptal',
+      confirmButtonColor: '#6c5ce7',
+      inputValidator: (v) => (!v || !String(v).trim() ? 'URL gerekli' : null),
+    });
+    if (!isConfirmed || !url) return;
+    const btn = document.getElementById('btnUrlImport');
+    btn.disabled = true;
+    await Swal.fire({ title: 'İlan alınıyor…', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    const resp = await Pzr.apiCall('/api/panel/importListing', { url: String(url).trim() }, 'POST');
+    Swal.close();
+    btn.disabled = false;
+    if (resp.sonuc === 'tamam') {
+      await Swal.fire({ icon: 'success', title: 'İlan oluşturuldu', text: resp.mesaj || '', timer: 2200, showConfirmButton: false });
+      window.location.reload();
+    } else {
+      await Swal.fire({ icon: 'error', title: 'Oluşturulamadı', text: resp.mesaj || resp.sonuc || 'Bilinmeyen hata' });
+    }
+  });
 
   document.addEventListener('visibilitychange', () => { document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER — Dashboard'; });
 })();

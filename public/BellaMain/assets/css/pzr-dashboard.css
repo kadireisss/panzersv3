@@ -50,6 +50,20 @@
 .pzr-hamburger { display: none; background: none; border: none; color: var(--pzr-text-primary); font-size: 1.3rem; cursor: pointer; padding: 0.25rem; }
 .pzr-topbar h4 { font-size: 0.95rem; font-weight: 600; }
 .pzr-topbar-right { display: flex; align-items: center; gap: 1rem; }
+.pzr-btn-url-import {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: #fff;
+  white-space: nowrap;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.pzr-btn-url-import:hover { opacity: 0.92; transform: translateY(-1px); }
+.pzr-btn-url-import:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .pzr-user-chip { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; background: rgba(255,255,255,0.04); border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
 .pzr-user-chip:hover { background: rgba(255,255,255,0.08); }
 .pzr-user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(108,92,231,0.3); }
