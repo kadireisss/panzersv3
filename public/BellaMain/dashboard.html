@@ -136,10 +136,6 @@
 <script>
 (function () {
   'use strict';
-  document.addEventListener('visibilitychange', function () {
-    document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER — Dashboard';
-  });
-
   (async function loadSession() {
     try {
       const res = await fetch('/api/panel/me', { credentials: 'same-origin' });

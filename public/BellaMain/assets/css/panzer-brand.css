@@ -381,23 +381,6 @@ aside .pzr-brand-footer strong {
   font-weight: 800;
 }
 
-/* Auth: PHP ile aynı hero GIF alanı */
-.pzr-auth__hero-gif-wrap {
-  margin-top: 1.25rem;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  max-width: 100%;
-  width: min(300px, 100%);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-}
-.pzr-auth__hero-gif-wrap img {
-  display: block;
-  width: 100%;
-  height: auto;
-  vertical-align: middle;
-}
-
 .pzr-auth .alert-danger {
   background: rgba(196, 30, 58, 0.22) !important;
   border: 1px solid rgba(255, 80, 110, 0.45) !important;

@@ -3,11 +3,6 @@
 (function () {
   'use strict';
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') { document._originalTitle = document.title; document.title = 'Bizi unutma :)'; }
-    else { document.title = document._originalTitle || 'PANZER'; }
-  });
-
   async function apiCall(url, data = {}, method = 'POST', timeoutMs = 0) {
     let timer;
     try {
