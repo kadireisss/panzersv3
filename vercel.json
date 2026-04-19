@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/", "destination": "/BellaMain/signin.html" },
     { "source": "/signin", "destination": "/BellaMain/signin.html" },
     { "source": "/signup", "destination": "/BellaMain/signup.html" },
     { "source": "/dashboard", "destination": "/BellaMain/dashboard.html" },
