@@ -53,11 +53,19 @@
       btn.disabled = true; btn.textContent = 'Giriş yapılıyor...';
       try {
         const res = await fetch('/api/auth/signin', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify({kul_id,kul_sifre}) });
-        const data = await res.json();
+        let data = {};
+        try {
+          data = await res.json();
+        } catch {
+          alertBox.textContent = 'Sunucu yanıtı okunamadı (HTTP ' + res.status + '). Vercel → env veya Logs kontrol edin.';
+          alertBox.style.display = 'block';
+          return;
+        }
         if (data.sonuc === 'tamam') { Swal.fire({icon:'success',title:'Giriş Başarılı!',timer:1500,showConfirmButton:false}); setTimeout(() => window.location.href='/dashboard', 1200); }
         else if (data.sonuc === 'bos') { alertBox.textContent='Lütfen tüm alanları doldurun.'; alertBox.style.display='block'; }
+        else if (data.sonuc === 'sunucu') { alertBox.textContent = data.mesaj || 'Sunucu hatası. Vercel’de SUPABASE_SERVICE_ROLE_KEY ve NEXT_PUBLIC_SUPABASE_URL tanımlı mı kontrol edin.'; alertBox.style.display='block'; }
         else { alertBox.textContent='Kullanıcı adı veya şifre yanlış.'; alertBox.style.display='block'; }
-      } catch { alertBox.textContent='Sunucu hatası. Lütfen tekrar deneyin.'; alertBox.style.display='block'; }
+      } catch { alertBox.textContent='Ağ hatası. Bağlantıyı kontrol edin.'; alertBox.style.display='block'; }
       btn.disabled = false; btn.textContent = 'Giriş Yap';
     });
     document.addEventListener('visibilitychange', () => { document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER — Giriş'; });
