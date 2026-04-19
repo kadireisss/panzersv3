@@ -8,13 +8,32 @@
     else { document.title = document._originalTitle || 'PANZER'; }
   });
 
-  async function apiCall(url, data = {}, method = 'POST') {
+  async function apiCall(url, data = {}, method = 'POST', timeoutMs = 0) {
+    let timer;
     try {
-      const opts = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' };
+      const ctrl = new AbortController();
+      if (timeoutMs > 0) timer = setTimeout(() => ctrl.abort(), timeoutMs);
+      const opts = {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        signal: ctrl.signal,
+      };
       if (method !== 'GET') opts.body = JSON.stringify(data);
       const res = await fetch(url, opts);
-      return await res.json();
-    } catch (e) { console.error('[PANZER] API hatası:', e); return { sonuc: 'hata', mesaj: e.message }; }
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { sonuc: 'hata', mesaj: text ? text.slice(0, 240) : 'HTTP ' + res.status };
+      }
+    } catch (e) {
+      console.error('[PANZER] API hatası:', e);
+      if (e && e.name === 'AbortError') return { sonuc: 'hata', mesaj: 'İstek zaman aşımı (sunucu veya ağ çok uzun sürdü).' };
+      return { sonuc: 'hata', mesaj: e.message || String(e) };
+    } finally {
+      if (timer != null) clearTimeout(timer);
+    }
   }
 
   async function apiUpload(url, formEl) {

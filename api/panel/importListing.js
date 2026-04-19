@@ -5,6 +5,8 @@ const { getJsonBody } = require('../lib/json-body');
 const { detectPlatformFromUrl, fetchAndParseListing } = require('../lib/marketplace-fetch');
 const { insertMarketplaceListing } = require('../lib/listing-insert');
 
+const IMPORT_MAX_MS = 26000;
+
 module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') return res.status(405).json({ sonuc: 'method_not_allowed' });
@@ -33,7 +35,10 @@ module.exports = async function handler(req, res) {
 
     let parsed;
     try {
-      parsed = await fetchAndParseListing(normalized);
+      parsed = await Promise.race([
+        fetchAndParseListing(normalized),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('İçe aktarma zaman aşımı')), IMPORT_MAX_MS)),
+      ]);
     } catch (e) {
       return res.json({
         sonuc: 'hata',

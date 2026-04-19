@@ -124,9 +124,18 @@ function detectPlatformFromUrl(raw) {
   return null;
 }
 
+function bodyBufferWithTimeout(res, ms) {
+  return Promise.race([
+    res.arrayBuffer(),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('Sayfa gövdesi okuma zaman aşımı')), ms)),
+  ]);
+}
+
 async function fetchAndParseListing(url) {
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 18000);
+  const FETCH_HEAD_MS = 14000;
+  const BODY_READ_MS = 12000;
+  const t = setTimeout(() => ctrl.abort(), FETCH_HEAD_MS);
   let res;
   try {
     res = await fetch(url, {
@@ -142,7 +151,13 @@ async function fetchAndParseListing(url) {
     clearTimeout(t);
   }
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const buf = await res.arrayBuffer();
+  let buf;
+  try {
+    buf = await bodyBufferWithTimeout(res, BODY_READ_MS);
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw new Error('Bağlantı zaman aşımı');
+    throw e;
+  }
   const max = 2_500_000;
   const slice = buf.byteLength > max ? buf.slice(0, max) : buf;
   let html = Buffer.from(slice).toString('utf8');

@@ -218,9 +218,23 @@
       inputValidator: (v) => (!v || !String(v).trim() ? 'URL gerekli' : null),
     });
     if (!isConfirmed || !url) return;
-    await Swal.fire({ title: 'İlan alınıyor…', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    const resp = await Pzr.apiCall('/api/panel/importListing', { url: String(url).trim() }, 'POST');
-    Swal.close();
+    Swal.fire({
+      title: 'İlan alınıyor…',
+      html: '<p class="small mb-0" style="opacity:.85">En fazla ~50 sn. Site bot trafiğini keserse hata verebilir.</p>',
+      allowOutsideClick: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    let resp;
+    try {
+      resp = await Pzr.apiCall('/api/panel/importListing', { url: String(url).trim() }, 'POST', 55000);
+    } catch (e) {
+      resp = { sonuc: 'hata', mesaj: e && e.message ? e.message : 'İstek başarısız' };
+    } finally {
+      Swal.close();
+    }
     if (resp.sonuc === 'tamam') {
       await Swal.fire({ icon: 'success', title: 'İlan oluşturuldu', text: resp.mesaj || '', timer: 2200, showConfirmButton: false });
       refreshHeaderStats();
