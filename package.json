@@ -9,7 +9,8 @@
     "build": "echo 'Serverless — no build step'",
     "seed": "node scripts/seed.js",
     "db:apply": "node scripts/apply-schema.js",
-    "setup:all": "node scripts/setup-all.js"
+    "setup:all": "node scripts/setup-all.js",
+    "supabase:verify": "node scripts/verify-supabase.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

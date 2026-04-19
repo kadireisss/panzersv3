@@ -7,11 +7,12 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
+const { getSupabaseUrl, getServiceRoleKey } = require('../api/lib/supabase-env');
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = getSupabaseUrl();
+const supabaseKey = getServiceRoleKey();
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ .env içinde NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY gerekli.');
+  console.error('❌ .env: NEXT_PUBLIC_SUPABASE_URL veya SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY gerekli.');
   process.exit(1);
 }
 
