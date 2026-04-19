@@ -1,0 +1,10 @@
+# PANZER V3 — .gitignore
+node_modules/
+.env
+.env.local
+.env.production
+.vercel/
+.next/
+*.log
+.DS_Store
+Thumbs.db

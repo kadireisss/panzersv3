@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════════════════════════
+   panzer-brand.css — PANZER Marka Stilleri
+   Logo pulse, ejder glow, versiyon rozetleri
+   ═══════════════════════════════════════════════════════════════ */
+
+.pzr-logo-glow { filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.4)); transition: filter 0.4s ease; }
+.pzr-logo-glow:hover { filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.7)); }
+
+.pzr-brand-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem;
+  background: rgba(108, 92, 231, 0.12); border: 1px solid rgba(108, 92, 231, 0.25);
+  border-radius: 20px; font-size: 0.7rem; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--pzr-accent, #6c5ce7);
+}
+
+.pzr-version-tag { font-family: 'Roboto Mono', monospace; font-size: 0.65rem; color: var(--pzr-text-muted, #55556a); letter-spacing: 1px; }
+
+.pzr-brand-footer {
+  text-align: center; padding: 1.5rem 0; font-size: 0.75rem; color: var(--pzr-text-muted, #55556a);
+  letter-spacing: 0.5px; border-top: 1px solid rgba(255, 255, 255, 0.04); margin-top: 2rem;
+}
+.pzr-brand-footer strong { color: var(--pzr-accent, #6c5ce7); font-weight: 700; }
+
+.pzr-masked::after { content: '**'; color: var(--pzr-text-muted, #55556a); }
+
+@keyframes pzr-dragon-breathe { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+.pzr-dragon-anim { animation: pzr-dragon-breathe 3s ease-in-out infinite; }

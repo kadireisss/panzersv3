@@ -1,0 +1,129 @@
+/* ═══════════════════════════════════════════════════════════════
+   pzr-auth.css — PANZER Giriş/Kayıt Split Layout
+   Glassmorphism + Dark Theme + Mikro-animasyonlar
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --pzr-bg-primary: #0a0a0f;
+  --pzr-bg-secondary: #12121a;
+  --pzr-bg-card: rgba(255, 255, 255, 0.04);
+  --pzr-bg-glass: rgba(255, 255, 255, 0.06);
+  --pzr-glass-border: rgba(255, 255, 255, 0.08);
+  --pzr-text-primary: #e8e8ed;
+  --pzr-text-secondary: #8b8b9e;
+  --pzr-text-muted: #55556a;
+  --pzr-accent: #6c5ce7;
+  --pzr-accent-glow: rgba(108, 92, 231, 0.3);
+  --pzr-accent-hover: #7c6ef7;
+  --pzr-red: #ff6b6b;
+  --pzr-green: #51cf66;
+  --pzr-gold: #ffd43b;
+  --pzr-radius: 16px;
+  --pzr-radius-sm: 10px;
+  --pzr-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --pzr-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body.pzr-auth-body {
+  font-family: var(--pzr-font);
+  background: var(--pzr-bg-primary);
+  color: var(--pzr-text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.pzr-auth-wrapper { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+.pzr-auth-hero {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  position: relative; padding: 3rem;
+  background: linear-gradient(135deg, #0d0d1a 0%, #1a1033 50%, #0d0d1a 100%);
+  overflow: hidden;
+}
+
+.pzr-auth-hero::before {
+  content: ''; position: absolute; width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--pzr-accent-glow) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  animation: pzr-pulse 4s ease-in-out infinite; pointer-events: none;
+}
+
+@keyframes pzr-pulse {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.pzr-auth-hero-logo {
+  width: 120px; height: 120px; object-fit: contain;
+  filter: drop-shadow(0 0 30px var(--pzr-accent-glow));
+  margin-bottom: 2rem; z-index: 1; animation: pzr-float 3s ease-in-out infinite;
+}
+
+@keyframes pzr-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.pzr-auth-hero h1 {
+  font-size: 2.5rem; font-weight: 800;
+  background: linear-gradient(135deg, #fff 0%, var(--pzr-accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  z-index: 1; margin-bottom: 0.5rem;
+}
+
+.pzr-auth-hero p { font-size: 1rem; color: var(--pzr-text-secondary); z-index: 1; letter-spacing: 2px; text-transform: uppercase; }
+
+.pzr-auth-form-area { display: flex; justify-content: center; align-items: center; padding: 3rem; background: var(--pzr-bg-secondary); }
+
+.pzr-auth-card {
+  width: 100%; max-width: 420px;
+  background: var(--pzr-bg-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pzr-glass-border); border-radius: var(--pzr-radius); padding: 2.5rem; position: relative;
+}
+
+.pzr-auth-card h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+.pzr-auth-card .pzr-subtitle { color: var(--pzr-text-secondary); font-size: 0.875rem; margin-bottom: 2rem; }
+
+.pzr-form-group { margin-bottom: 1.25rem; }
+.pzr-form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--pzr-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+
+.pzr-form-group input {
+  width: 100%; padding: 0.875rem 1rem;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--pzr-glass-border);
+  border-radius: var(--pzr-radius-sm); color: var(--pzr-text-primary);
+  font-family: var(--pzr-font); font-size: 0.95rem; transition: var(--pzr-transition); outline: none;
+}
+
+.pzr-form-group input:focus { border-color: var(--pzr-accent); box-shadow: 0 0 0 3px var(--pzr-accent-glow); background: rgba(255, 255, 255, 0.06); }
+.pzr-form-group input::placeholder { color: var(--pzr-text-muted); }
+
+.pzr-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, var(--pzr-accent) 0%, #5a4bd6 100%); color: #fff;
+  border: none; border-radius: var(--pzr-radius-sm); font-family: var(--pzr-font);
+  font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: var(--pzr-transition);
+  letter-spacing: 0.5px; position: relative; overflow: hidden;
+}
+
+.pzr-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--pzr-accent-glow); }
+.pzr-btn:active { transform: translateY(0); }
+.pzr-btn::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255, 255, 255, 0.15); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.4s, height 0.4s; }
+.pzr-btn:active::after { width: 300px; height: 300px; }
+
+.pzr-auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--pzr-text-secondary); }
+.pzr-auth-footer a { color: var(--pzr-accent); text-decoration: none; font-weight: 600; transition: var(--pzr-transition); }
+.pzr-auth-footer a:hover { color: var(--pzr-accent-hover); text-decoration: underline; }
+
+@media (max-width: 991px) {
+  .pzr-auth-wrapper { grid-template-columns: 1fr; }
+  .pzr-auth-hero { min-height: 220px; padding: 2rem; }
+  .pzr-auth-hero h1 { font-size: 1.8rem; }
+  .pzr-auth-hero-logo { width: 80px; height: 80px; margin-bottom: 1rem; }
+  .pzr-auth-form-area { padding: 2rem 1.5rem; }
+  .pzr-auth-card { padding: 2rem 1.5rem; }
+}
+
+.pzr-alert { padding: 0.75rem 1rem; border-radius: var(--pzr-radius-sm); font-size: 0.85rem; margin-bottom: 1rem; display: none; }
+.pzr-alert-error { background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.3); color: var(--pzr-red); }
+.pzr-alert-success { background: rgba(81, 207, 102, 0.1); border: 1px solid rgba(81, 207, 102, 0.3); color: var(--pzr-green); }
+
+.pzr-version { position: fixed; bottom: 1rem; right: 1rem; font-size: 0.7rem; color: var(--pzr-text-muted); letter-spacing: 1px; }

@@ -1,0 +1,23 @@
+{
+  "name": "panzer-v3",
+  "version": "3.0.0",
+  "description": "PANZER E-Commerce Platform — V3 Vercel + Supabase",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Serverless — no build step'",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3",
+    "cookie": "^0.6.0",
+    "formidable": "^3.5.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "vercel": "^33.0.0"
+  }
+}

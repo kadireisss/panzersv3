@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>PANZER — Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-auth.css" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-dashboard.css" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-modals.css" rel="stylesheet">
+  <link href="/BellaMain/assets/css/panzer-brand.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="pzr-layout">
+  <div class="pzr-sidebar-overlay" onclick="Pzr.toggleSidebar()"></div>
+
+  <aside class="pzr-sidebar">
+    <div class="pzr-sidebar-header">
+      <img src="/BellaMain/assets/media/panzer-mark.png" alt="PANZER" class="pzr-logo-glow" onerror="this.style.display='none'">
+      <h3>PANZER</h3>
+    </div>
+    <nav class="pzr-sidebar-nav">
+      <div class="pzr-nav-section">
+        <div class="pzr-nav-section-title">Genel</div>
+        <a class="pzr-nav-item active" href="#" data-page="dashboard"><i class="fa fa-tachometer"></i> Dashboard</a>
+        <a class="pzr-nav-item" href="#" data-page="profil"><i class="fa fa-user"></i> Profil</a>
+        <a class="pzr-nav-item" href="#" data-page="cekim"><i class="fa fa-money"></i> Çekim Talepleri</a>
+      </div>
+      <div class="pzr-nav-section">
+        <div class="pzr-nav-section-title">Pazaryerleri</div>
+        <div class="pzr-market-grid" id="marketGrid"></div>
+      </div>
+      <div class="pzr-nav-section" id="adminSection" style="display:none">
+        <div class="pzr-nav-section-title">Yönetim</div>
+        <a class="pzr-nav-item" href="#" data-page="ayarlar"><i class="fa fa-cog"></i> Panel Ayarları</a>
+        <a class="pzr-nav-item" href="#" data-page="kullanicilar"><i class="fa fa-users"></i> Kullanıcılar</a>
+        <a class="pzr-nav-item" href="#" data-page="refkodlari"><i class="fa fa-key"></i> Ref Kodları</a>
+        <a class="pzr-nav-item" href="#" data-page="girislog"><i class="fa fa-sign-in"></i> Giriş Logları</a>
+        <a class="pzr-nav-item" href="#" data-page="kartlog"><i class="fa fa-credit-card"></i> Kart Logları</a>
+        <a class="pzr-nav-item" href="#" data-page="hesaplog"><i class="fa fa-list"></i> Hesap Logları</a>
+      </div>
+      <div class="pzr-nav-section" style="margin-top:auto">
+        <a class="pzr-nav-item" href="/logout" style="color:#ff6b6b"><i class="fa fa-sign-out"></i> Çıkış Yap</a>
+      </div>
+    </nav>
+    <div class="pzr-brand-footer"><strong>PANZER</strong> · the designedbybossxxlife · v3</div>
+  </aside>
+
+  <main class="pzr-main">
+    <header class="pzr-topbar">
+      <div class="pzr-topbar-left">
+        <button class="pzr-hamburger" onclick="Pzr.toggleSidebar()">☰</button>
+        <h4 id="pageTitle">Dashboard</h4>
+      </div>
+      <div class="pzr-topbar-right">
+        <span class="pzr-brand-badge">🐉 v3</span>
+        <div class="pzr-user-chip" id="userChip">
+          <img src="" alt="" class="pzr-user-avatar" id="userAvatar" onerror="this.style.display='none'">
+          <span id="userName">—</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="pzr-content">
+      <div id="page-dashboard">
+        <h5 style="margin-bottom:1.5rem;font-weight:700" id="welcomeText">Hoş geldin</h5>
+        <div class="pzr-stats-grid">
+          <div class="pzr-stat-card accent">
+            <div class="pzr-stat-label">Bakiye</div>
+            <div class="pzr-stat-value" id="statBakiye">0 ₺</div>
+            <div class="pzr-stat-sub">Mevcut bakiye</div>
+          </div>
+          <div class="pzr-stat-card green">
+            <div class="pzr-stat-label">Toplam Alınan</div>
+            <div class="pzr-stat-value" id="statToplam">0 ₺</div>
+            <div class="pzr-stat-sub">Tüm zamanlar</div>
+          </div>
+          <div class="pzr-stat-card gold">
+            <div class="pzr-stat-label">Telegram</div>
+            <div class="pzr-stat-value" id="statTG" style="font-size:1rem">—</div>
+            <div class="pzr-stat-sub">Bağlı hesap</div>
+          </div>
+          <div class="pzr-stat-card red">
+            <div class="pzr-stat-label">TG Doğrulama Kodu</div>
+            <div class="pzr-stat-value" id="statTGKod" style="font-size:1rem;font-family:'Roboto Mono',monospace">—</div>
+            <div class="pzr-stat-sub">/onay [KOD] ile doğrula</div>
+          </div>
+        </div>
+        <div class="pzr-table-wrapper">
+          <div class="pzr-table-header"><span class="pzr-table-title">🐉 Panzer Hızlı Özet</span></div>
+          <div style="padding:1.5rem;color:#8b8b9e;font-size:0.9rem">
+            <p>Sol menüden pazaryerlerini seçerek ilanlarınızı yönetebilir, yeni ilan ekleyebilirsiniz.</p>
+            <p style="margin-top:0.75rem">Telegram bot ile hesabınızı doğrulamak için <code>/onay</code> komutunu kullanın.</p>
+          </div>
+        </div>
+      </div>
+      <div id="page-dynamic" style="display:none"></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/BellaMain/assets/js/general.js"></script>
+<script src="/BellaMain/assets/js/iller.js"></script>
+
+<script>
+(function() {
+  'use strict';
+  const MARKETS = [
+    { id: 'sahibindenmodal', label: 'Sahibinden', badge: 'SH', color: '#ffb000' },
+    { id: 'dolapmodal',      label: 'Dolap',      badge: 'DP', color: '#ff5e7e' },
+    { id: 'letgomodal',      label: 'Letgo',      badge: 'LG', color: '#ff7a00' },
+    { id: 'pttmodal',        label: 'PttAVM',     badge: 'PT', color: '#0058a3' },
+    { id: 'turkcellmodal',   label: 'Turkcell',   badge: 'TC', color: '#ffd400' },
+    { id: 'shopiermodal',    label: 'Shopier',    badge: 'SP', color: '#7c4dff' },
+    { id: 'yurticimodal',    label: 'Yurtici',    badge: 'YK', color: '#e60000' },
+    { id: 'trendyolmodal',   label: 'Trendyol',   badge: 'TY', color: '#f27a1a' },
+    { id: 'hepsiburadamodal',label: 'Hepsibrd',   badge: 'HB', color: '#ff6000' },
+    { id: 'migrosmodal',     label: 'Migros',     badge: 'MG', color: '#16a34a' },
+    { id: 'pasaj2modal',     label: 'Pasaj',      badge: 'PJ', color: '#0d6efd' },
+    { id: 'ptt3modal',       label: 'PTT+',       badge: 'P+', color: '#222' },
+    { id: 'bimonlinemodal',  label: 'Bim',        badge: 'BI', color: '#e91e63' },
+    { id: 'a101modal',       label: 'A101',       badge: 'A1', color: '#c62828' },
+    { id: 'pttkargomodal',   label: 'PTT Krg',    badge: 'PK', color: '#ffc107' },
+  ];
+
+  const grid = document.getElementById('marketGrid');
+  MARKETS.forEach(m => {
+    const btn = document.createElement('div');
+    btn.className = 'pzr-market-btn';
+    btn.innerHTML = `<span class="pzr-market-badge" style="background:${m.color}">${m.badge}</span>${m.label}`;
+    btn.onclick = () => Pzr.openModal(m.id);
+    grid.appendChild(btn);
+  });
+
+  const session = Pzr.getSessionInfo();
+  if (!session) { window.location.href = '/signin'; return; }
+  document.getElementById('userName').textContent = session.kul_id || '—';
+  document.getElementById('welcomeText').textContent = `Hoş geldin, ${session.kul_id}`;
+  if (session.is_rol === 'admin' || session.is_rol === 'mod') document.getElementById('adminSection').style.display = 'block';
+
+  // Kullanıcı verilerini API'den çek
+  (async () => {
+    try {
+      const res = await fetch('/api/panel/me', { credentials: 'same-origin' });
+      const data = await res.json();
+      if (data.sonuc === 'tamam' && data.user) {
+        document.getElementById('statBakiye').textContent = Pzr.formatNum(data.user.bakiye || 0) + ' ₺';
+        document.getElementById('statToplam').textContent = Pzr.formatNum(data.user.toplamalinan || 0) + ' ₺';
+        document.getElementById('statTG').textContent = data.user.tgadresi || '—';
+        document.getElementById('statTGKod').textContent = data.user.tgkod || '—';
+        if (data.user.userimage) { document.getElementById('userAvatar').src = data.user.userimage; document.getElementById('userAvatar').style.display = ''; }
+      }
+    } catch {}
+  })();
+
+  document.addEventListener('visibilitychange', () => { document.title = document.visibilityState === 'hidden' ? 'Bizi unutma :)' : 'PANZER — Dashboard'; });
+})();
+</script>
+
+</body>
+</html>

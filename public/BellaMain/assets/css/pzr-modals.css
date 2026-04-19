@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════════════
+   pzr-modals.css — PANZER Modal Dialog Stilleri
+   Glassmorphism backdrop, slide-up animasyonlar
+   ═══════════════════════════════════════════════════════════════ */
+
+.pzr-modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 1000; display: none; justify-content: center; align-items: flex-start; padding-top: 5vh; overflow-y: auto; }
+.pzr-modal-overlay.active { display: flex; animation: pzr-fade-in 0.25s ease; }
+@keyframes pzr-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.pzr-modal { width: 100%; max-width: 680px; background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; overflow: hidden; animation: pzr-slide-up 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); margin-bottom: 5vh; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5); }
+@keyframes pzr-slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+.pzr-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+.pzr-modal-head h5 { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+.pzr-modal-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.04); border: none; border-radius: 8px; color: #8b8b9e; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; }
+.pzr-modal-close:hover { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
+
+.pzr-modal-body { padding: 1.5rem; max-height: 65vh; overflow-y: auto; }
+.pzr-modal-body::-webkit-scrollbar { width: 4px; }
+.pzr-modal-body::-webkit-scrollbar-track { background: transparent; }
+.pzr-modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+.pzr-modal-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+.pzr-modal-form .pzr-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.pzr-modal-form .pzr-form-row.full { grid-template-columns: 1fr; }
+.pzr-modal-form label { display: block; font-size: 0.75rem; font-weight: 600; color: #8b8b9e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
+.pzr-modal-form input, .pzr-modal-form select, .pzr-modal-form textarea { width: 100%; padding: 0.7rem 0.85rem; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; color: #e8e8ed; font-family: 'Inter', sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
+.pzr-modal-form input:focus, .pzr-modal-form select:focus, .pzr-modal-form textarea:focus { border-color: #6c5ce7; box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
+.pzr-modal-form textarea { resize: vertical; min-height: 80px; }
+.pzr-modal-form select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b8b9e'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.2rem; padding-right: 2.5rem; }
+.pzr-modal-form select option { background: #1a1a2e; color: #e8e8ed; }
+
+.pzr-upload-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+.pzr-upload-slot { aspect-ratio: 1; border: 2px dashed rgba(255, 255, 255, 0.08); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; font-size: 0.65rem; color: #55556a; }
+.pzr-upload-slot:hover { border-color: rgba(108, 92, 231, 0.3); background: rgba(108, 92, 231, 0.05); }
+.pzr-upload-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.pzr-upload-slot .pzr-upload-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.pzr-upload-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+@media (max-width: 575px) {
+  .pzr-modal { max-width: 100%; margin: 0 0.5rem; border-radius: 12px; }
+  .pzr-modal-form .pzr-form-row { grid-template-columns: 1fr; }
+  .pzr-modal-body { padding: 1rem; }
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>PANZER — Çıkış</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="/BellaMain/assets/css/pzr-auth.css" rel="stylesheet">
+  <style>
+    .pzr-logout-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;gap:1.5rem}
+    .pzr-logout-center h2{font-size:1.5rem;font-weight:700}
+    .pzr-logout-center p{color:#8b8b9e}
+    .pzr-spinner{width:40px;height:40px;border:3px solid rgba(108,92,231,.2);border-top-color:#6c5ce7;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body class="pzr-auth-body">
+  <div class="pzr-logout-center">
+    <div class="pzr-spinner"></div>
+    <h2>Çıkış yapılıyor...</h2>
+    <p>Güvenli çıkış sağlanıyor, lütfen bekleyin.</p>
+  </div>
+  <script>
+    (async function(){try{await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'})}catch{}setTimeout(()=>{window.location.href='/signin'},1500)})();
+  </script>
+</body>
+</html>
